@@ -1,2 +1,3 @@
+
 # My_Portfolio
-Portofolio ini mencerminkan dedikasi saya dalam mengembangkan keterampilan dan tetap terinspirasi oleh tren dan inovasi terbaru dalam industri. Saya berharap bahwa melalui portofolio ini, orang-orang yang berkepentingan dapat melihat potensi saya dalam memberikan kontribusi yang berharga dan solusi kreatif di masa depan.
+Portofolio ini menunjukkan komitmen saya dalam mengembangkan keterampilan dan terus mengikuti tren dan inovasi terbaru di dalam dunia industri. Saya berharap bahwa dengan melihat portofolio ini, orang-orang yang tertarik dapat melihat potensi saya untuk memberikan kontribusi berharga dan solusi kreatif di masa yang akan datang.
