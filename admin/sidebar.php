@@ -81,7 +81,7 @@
         <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Edit Portfolio:</h6>
             <a class="collapse-item" href="about.php">About</a>
-            <a class="collapse-item" href="edit_pengalaman.php">Experience</a>
+            <a class="collapse-item" href="experience.php">Experience</a>
             <h6 class="collapse-header">Login Screens:</h6>
             <a class="collapse-item" href="login.html">Login</a>
             <a class="collapse-item" href="register.html">Register</a>

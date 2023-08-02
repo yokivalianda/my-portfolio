@@ -88,6 +88,7 @@ $d = mysqli_fetch_assoc($query);
                 <th>Posisi</th>
                 <th>Perusahaan</th>
                 <th>Deskripsi</th>
+                <th>Aksi</th>
             </tr>
         </thead>
         <tbody>
@@ -113,7 +114,8 @@ $d = mysqli_fetch_assoc($query);
                 echo '<td>' . $row['posisi'] . '</td>';
                 echo '<td>' . $row['perusahaan'] . '</td>';
                 echo '<td>' . $row['ket'] . '</td>';
-                echo '</tr>';
+               // Tambahkan tombol update dengan mengirimkan ID record sebagai parameter
+               echo '<td><a href="update_experience.php?id=' . $row['id'] . '" class="btn btn-primary btn-sm">Update</a></td>';
                 $no++;
             }
 

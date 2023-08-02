@@ -28,7 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($updateResult) {
         // Redirect ke halaman lain jika perlu
-        header("Location: edit_pengalaman.php");
+        header("Location: experience.php");
         exit();
     } else {
         echo "Error dalam memperbarui data: " . $connection->error;

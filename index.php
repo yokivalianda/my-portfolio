@@ -227,53 +227,42 @@ if ($result_about && $result_about->num_rows > 0) {
                 <h2>EXPERIENCE</h2>
             </header>
             <div class="timeline">
-                <div class="timeline-item right wow slideInRight" data-wow-delay="0.1s">
-                    <div class="timeline-text">
-                        <div class="timeline-date">Juni 2023 - Saat ini</div>
-                        <h2>IT Support Trainee</h2>
-                        <h4>Digital Talent Scholarship, Indonesia</h4>
-                        <p>
-                            Topik yang dipelajari dalam program beasiswa IT Support digitalent sebagai berikut. <br>
-                            • Dasar-dasar Dukungan Teknis. <br>
-                            • Seluk Beluk Jaringan Komputer. <br>
-                            • Sistem Operasi. <br>
-                            • Administrasi Sistem dan Layanan Infrastruktur IT. <br>
-                            • Keamanan IT: Pertahanan terhadap Kejahatan Digital.
-                        </p>
-                    </div>
-                </div>
-                <div class="timeline-item left wow slideInLeft" data-wow-delay="0.1s">
-                    <div class="timeline-text">
-                        <div class="timeline-date">Mei 2019 - Saat ini</div>
-                        <h2>Freelancer</h2>
-                        <h4>Riset Pasar, Indonesia</h4>
-                        <p>
-                            • Melakukan isi survei berbayar di berbagai platform internet. <br>
-                            • Affiliate di platform Tokopedia dan Shopee.
-                        </p>
-                    </div>
-                </div>
-                <div class="timeline-item right wow slideInRight" data-wow-delay="0.1s">
-                    <div class="timeline-text">
-                        <div class="timeline-date">Maret 2021 - April 2021</div>
-                        <h2>Admin Marketing</h2>
-                        <h4>Internship, PT. DUA PUTRA ASURO, Palembang</h4>
-                        <p>
-                            • Melakukan pemasaran produk. <br>
-                            • Membuat projek website penjualan.
-                        </p>
-                    </div>
-                </div>
-                <div class="timeline-item left wow slideInLeft" data-wow-delay="0.1s">
-                    <div class="timeline-text">
-                        <div class="timeline-date">Agustus 2016 - November 2016</div>
-                        <h2>Admin</h2>
-                        <h4>Internship, PT. SUGIH RAHAYU BAHAGIA, Palembang</h4>
-                        <p>
-                            • Membantu pengarsipan dan pengetikan dokumen di kantor. <br>
-                            • Membantu dalam pengelolaan berbagai dokumen.
-                        </p>
-                    </div>
+            <div class="container">
+                    <?php
+                    // Langkah 1: Buat koneksi ke database
+                    $conn = mysqli_connect('localhost', 'root', '', 'portfolio');
+
+                    // Periksa koneksi
+                    if (!$conn) {
+                        die("Koneksi gagal: " . mysqli_connect_error());
+                    }
+
+                    // Langkah 2: Ambil data dari tabel 'experience' dalam database
+                    $query = "SELECT * FROM experience";
+                    $result = mysqli_query($conn, $query);
+
+                    // Langkah 3: Tampilkan data dalam loop
+                    $isRight = true; // Flag untuk menentukan posisi item di timeline
+                    while ($row = mysqli_fetch_assoc($result)) {
+                        ?>
+                        <div class="timeline-item <?php echo ($isRight) ? 'right' : 'left'; ?> wow slideIn<?php echo ($isRight) ? 'Right' : 'Left'; ?>" data-wow-delay="0.1s">
+                            <div class="timeline-text">
+                                <div class="timeline-date"><?php echo $row['tanggal']; ?></div>
+                                <h2><?php echo $row['posisi']; ?></h2>
+                                <h4><?php echo $row['perusahaan']; ?></h4>
+                                <p>
+                                    <?php echo $row['ket']; ?>
+                                </p>
+                            </div>
+                        </div>
+                        <?php
+                        // Toggle flag untuk mengubah posisi item di timeline
+                        $isRight = !$isRight;
+                    }
+
+                    // Langkah 4: Tutup koneksi ke database
+                    mysqli_close($conn);
+                    ?>
                 </div>
             </div>
         </div>
