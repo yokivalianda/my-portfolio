@@ -106,7 +106,7 @@
                             }
 
                             // Langkah 2: Ambil data dari tabel 'experience' dalam database
-                            $query = "SELECT * FROM experience";
+                            $query = "SELECT * FROM experience order by urutan asc";
                             $result = mysqli_query($conn, $query);
 
                             // Langkah 3: Tampilkan data dalam tabel
