@@ -14,52 +14,53 @@
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link
-        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"rel="stylesheet">
-         <!-- Tambahkan link ke Bootstrap CSS -->
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
+    <!-- Tambahkan link ke Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
     <!-- Add this in the head section -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
     <?php
-// Konfigurasi koneksi database
-$host = "localhost"; // Ganti dengan nama host database Anda
-$username = "root"; // Ganti dengan nama pengguna database Anda
-$password = ""; // Ganti dengan kata sandi database Anda
-$database = "portfolio"; // Ganti dengan nama database Anda
+    // Konfigurasi koneksi database
+    $host = "localhost"; // Ganti dengan nama host database Anda
+    $username = "root"; // Ganti dengan nama pengguna database Anda
+    $password = ""; // Ganti dengan kata sandi database Anda
+    $database = "portfolio"; // Ganti dengan nama database Anda
 
 
-// Membuat koneksi ke database
-$connection = new mysqli($host, $username, $password, $database);
+    // Membuat koneksi ke database
+    $connection = new mysqli($host, $username, $password, $database);
 
-// Memeriksa apakah koneksi berhasil
-if ($connection->connect_error) {
-    die("Koneksi database gagal: " . $connection->connect_error);
-}
-
-// Mendapatkan data dari database
-$query = "SELECT id, posisi, perusahaan, ket, tanggal FROM experience"; // Ganti "about" dengan nama tabel Anda
-$result = $connection->query($query);
-
-if ($result) {
-    // Pastikan hasil query valid sebelum mengakses properti num_rows
-    if ($result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-        $existingText = $row["id"];
-    } else {
-        $existingText = ""; // Jika data tidak ditemukan, teks akan kosong atau Anda bisa melakukan tindakan lain sesuai kebutuhan.
+    // Memeriksa apakah koneksi berhasil
+    if ($connection->connect_error) {
+        die("Koneksi database gagal: " . $connection->connect_error);
     }
-} else {
-    // Jika eksekusi query gagal, tampilkan pesan error
-    echo "Error dalam eksekusi query: " . $connection->error;
-}
-    // buat query untuk ambil data dari database
-$query= mysqli_query($connection, "SELECT * FROM experience");
-$d = mysqli_fetch_assoc($query);
 
-?>
+    // Mendapatkan data dari database
+    $query = "SELECT id, posisi, perusahaan, ket, tanggal FROM experience"; // Ganti "about" dengan nama tabel Anda
+    $result = $connection->query($query);
+
+    if ($result) {
+        // Pastikan hasil query valid sebelum mengakses properti num_rows
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $existingText = $row["id"];
+        } else {
+            $existingText = ""; // Jika data tidak ditemukan, teks akan kosong atau Anda bisa melakukan tindakan lain sesuai kebutuhan.
+        }
+    } else {
+        // Jika eksekusi query gagal, tampilkan pesan error
+        echo "Error dalam eksekusi query: " . $connection->error;
+    }
+    // buat query untuk ambil data dari database
+    $query = mysqli_query($connection, "SELECT * FROM experience");
+    $d = mysqli_fetch_assoc($query);
+
+    ?>
 </head>
 
 <body id="page-top">
@@ -67,88 +68,92 @@ $d = mysqli_fetch_assoc($query);
     <!-- Page Wrapper -->
     <div id="wrapper">
 
-       <?php include "sidebar.php"?>
+        <?php include "sidebar.php" ?>
 
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
 
             <!-- Main Content -->
             <div id="content">
-                  <?php include "topbar.php" ?>
-
-                
-<!-- Begin Page Content -->
-<div class="container mt-4">
-    <h2>Tabel Experience</h2>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>No</th>
-                <th>Tanggal</th>
-                <th>Posisi</th>
-                <th>Perusahaan</th>
-                <th>Deskripsi</th>
-                <th>Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php
-            // Langkah 1: Buat koneksi ke database
-            $conn = mysqli_connect('localhost', 'root', '', 'portfolio');
-
-            // Periksa koneksi
-            if (!$conn) {
-                die("Koneksi gagal: " . mysqli_connect_error());
-            }
-
-            // Langkah 2: Ambil data dari tabel 'experience' dalam database
-            $query = "SELECT * FROM experience";
-            $result = mysqli_query($conn, $query);
-
-            // Langkah 3: Tampilkan data dalam tabel
-            $no = 1;
-            while ($row = mysqli_fetch_assoc($result)) {
-                echo '<tr>';
-                echo '<td>' . $no . '</td>';
-                echo '<td>' . $row['tanggal'] . '</td>';
-                echo '<td>' . $row['posisi'] . '</td>';
-                echo '<td>' . $row['perusahaan'] . '</td>';
-                echo '<td>' . $row['ket'] . '</td>';
-               // Tambahkan tombol update dengan mengirimkan ID record sebagai parameter
-               echo '<td><a href="update_experience.php?id=' . $row['id'] . '" class="btn btn-primary btn-sm">Update</a></td>';
-                $no++;
-            }
-
-            // Langkah 4: Tutup koneksi ke database
-            mysqli_close($conn);
-            ?>
-        </tbody>
-    </table>
-</div>
+                <?php include "topbar.php"; ?>
 
 
-    <!-- Tambahkan link JS Bootstrap (Jika diperlukan) -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<!-- END Page Content -->
+                <!-- Begin Page Content -->
+                <div class="container mt-4">
+                    <div class="d-flex justify-content-between">
+                        <h2>Tabel Experience</h2>
+                        <a href="add_experience.php" class="btn btn-success">Add Experience</a>
+                    </div>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Tanggal</th>
+                                <th>Posisi</th>
+                                <th>Perusahaan</th>
+                                <th>Deskripsi</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            // Langkah 1: Buat koneksi ke database
+                            $conn = mysqli_connect('localhost', 'root', '', 'portfolio');
 
-    
-     <!-- Tambahkan script dan link ke Bootstrap JS -->
-     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <!-- End Page Content -->
+                            // Periksa koneksi
+                            if (!$conn) {
+                                die("Koneksi gagal: " . mysqli_connect_error());
+                            }
 
+                            // Langkah 2: Ambil data dari tabel 'experience' dalam database
+                            $query = "SELECT * FROM experience";
+                            $result = mysqli_query($conn, $query);
+
+                            // Langkah 3: Tampilkan data dalam tabel
+                            $no = 1;
+                            while ($row = mysqli_fetch_assoc($result)) {
+                                echo '<tr>';
+                                echo '<td>' . $no . '</td>';
+                                echo '<td>' . $row['tanggal'] . '</td>';
+                                echo '<td>' . $row['posisi'] . '</td>';
+                                echo '<td>' . $row['perusahaan'] . '</td>';
+                                echo '<td>' . $row['ket'] . '</td>';
+                                // Tambahkan tombol update dengan mengirimkan ID record sebagai parameter
+                                echo '<td><a href="update_experience.php?id=' . $row['id'] . '" class="btn btn-primary btn-sm">Update</a></td>';
+                                $no++;
+                            }
+
+                            // Langkah 4: Tutup koneksi ke database
+                            mysqli_close($conn);
+                            ?>
+                        </tbody>
+                    </table>
                 </div>
-                <!-- /.container-fluid -->
+
+
+
+                <!-- Tambahkan link JS Bootstrap (Jika diperlukan) -->
+                <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+                <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
+                <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+                <!-- END Page Content -->
+
+
+                <!-- Tambahkan script dan link ke Bootstrap JS -->
+                <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+                <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+                <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+                <!-- End Page Content -->
 
             </div>
-            <!-- End of Main Content -->
-
+            <!-- /.container-fluid -->
 
         </div>
-        <!-- End of Content Wrapper -->
+        <!-- End of Main Content -->
+
+
+    </div>
+    <!-- End of Content Wrapper -->
 
     </div>
     <!-- End of Page Wrapper -->
@@ -189,7 +194,7 @@ $d = mysqli_fetch_assoc($query);
     <script src="js/sb-admin-2.min.js"></script>
 
     <!-- Add this script at the end of the body section -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 </body>
 

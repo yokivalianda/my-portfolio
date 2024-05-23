@@ -34,4 +34,3 @@ if (isset($_POST['id']) && isset($_POST['tanggal']) && isset($_POST['posisi']) &
 
 // Langkah 6: Tutup koneksi ke database
 mysqli_close($conn);
-?>

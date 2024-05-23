@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Update Pengalaman</title>
+    <title>Tambah Pengalaman</title>
     <!-- Tambahkan link ke file CSS Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <meta charset="utf-8">
@@ -23,8 +23,8 @@
 
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
-
-    <!-- Custom style untuk textarea -->
+    <!-- Add this in the head section -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
     textarea {
         resize: none;
@@ -49,8 +49,35 @@
             <div id="content">
                 <?php include "topbar.php" ?>
 
+                <!-- Begin Page Content -->
                 <div class="container mt-4">
-                    <?php
+                    <div class="d-flex justify-content-between">
+                        <h2>Tambah Experience</h2>
+                    </div>
+                    <form action="proses_tambah_experience.php" method="POST">
+                        <div class="form-group">
+                            <label for="tanggal">Tanggal</label>
+                            <input type="text" class="form-control" id="tanggal" name="tanggal" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="posisi">Posisi</label>
+                            <input type="text" class="form-control" id="posisi" name="posisi" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="perusahaan">Perusahaan</label>
+                            <input type="text" class="form-control" id="perusahaan" name="perusahaan" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="deskripsi">Deskripsi</label>
+                            <textarea class="form-control" id="deskripsi" name="deskripsi" rows="10"
+                                required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Tambah</button>
+                    </form>
+                </div>
+
+                <?php
+                if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     // Langkah 1: Buat koneksi ke database
                     $conn = mysqli_connect('localhost', 'root', '', 'portfolio');
 
@@ -59,53 +86,26 @@
                         die("Koneksi gagal: " . mysqli_connect_error());
                     }
 
-                    // Langkah 2: Periksa apakah ada parameter ID yang dikirimkan dari tabel sebelumnya
-                    if (isset($_GET['id'])) {
-                        $id = $_GET['id'];
+                    // Langkah 2: Ambil data dari form
+                    $tanggal = $_POST['tanggal'];
+                    $posisi = $_POST['posisi'];
+                    $perusahaan = $_POST['perusahaan'];
+                    $deskripsi = $_POST['deskripsi'];
 
-                        // Langkah 3: Ambil data pengalaman berdasarkan ID dari database
-                        $query = "SELECT * FROM experience WHERE id = $id";
-                        $result = mysqli_query($conn, $query);
+                    // Langkah 3: Insert data ke tabel 'experience'
+                    $query = "INSERT INTO experience (tanggal, posisi, perusahaan, ket) VALUES ('$tanggal', '$posisi', '$perusahaan', '$deskripsi')";
 
-                        // Langkah 4: Tampilkan data dalam formulir untuk update
-                        if (mysqli_num_rows($result) > 0) {
-                            $row = mysqli_fetch_assoc($result);
-                    ?>
-                    <h2>Update Pengalaman</h2>
-                    <form method="post" action="proses_update.php">
-                        <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
-                        <div class="form-group">
-                            <label>Tanggal</label>
-                            <input type="text" name="tanggal" class="form-control"
-                                value="<?php echo $row['tanggal']; ?>">
-                        </div>
-                        <div class="form-group">
-                            <label>Posisi</label>
-                            <input type="text" name="posisi" class="form-control" value="<?php echo $row['posisi']; ?>">
-                        </div>
-                        <div class="form-group">
-                            <label>Perusahaan</label>
-                            <input type="text" name="perusahaan" class="form-control"
-                                value="<?php echo $row['perusahaan']; ?>">
-                        </div>
-                        <div class="form-group">
-                            <label>Deskripsi</label>
-                            <textarea name="deskripsi" class="form-control"><?php echo $row['ket']; ?></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Update</button>
-                    </form>
-                    <?php
-                        } else {
-                            echo '<p>Data tidak ditemukan.</p>';
-                        }
-
-                        // Langkah 5: Tutup koneksi ke database
-                        mysqli_close($conn);
+                    if (mysqli_query($conn, $query)) {
+                        echo "<div class='alert alert-success mt-3'>Experience berhasil ditambahkan!</div>";
                     } else {
-                        echo '<p>Parameter ID tidak ditemukan.</p>';
+                        echo "<div class='alert alert-danger mt-3'>Error: " . $query . "<br>" . mysqli_error($conn) . "</div>";
                     }
-                    ?>
-                </div>
+
+                    // Langkah 4: Tutup koneksi ke database
+                    mysqli_close($conn);
+                }
+                ?>
+
 
                 <script>
                 // Function untuk mengatur tinggi textarea
@@ -133,11 +133,14 @@
                     }
                 });
                 </script>
+
+
             </div>
             <!-- /.container-fluid -->
 
         </div>
         <!-- End of Main Content -->
+
 
     </div>
     <!-- End of Content Wrapper -->
@@ -181,6 +184,12 @@
     <script src="js/sb-admin-2.min.js"></script>
 
     <!-- Add this script at the end of the body section -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
+    <!-- Tambahkan link ke file JavaScript Bootstrap dan jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 

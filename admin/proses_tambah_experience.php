@@ -1,4 +1,4 @@
-<!-- process_edit_experience.php -->
+<!-- process_add_experience.php -->
 <?php
 // Konfigurasi koneksi database
 $host = "localhost"; // Ganti dengan nama host database Anda
@@ -14,24 +14,26 @@ if ($connection->connect_error) {
     die("Koneksi database gagal: " . $connection->connect_error);
 }
 
-// Menyimpan data yang diedit ke dalam database jika formulir dikirimkan
+// Menyimpan data baru ke dalam database jika formulir dikirimkan
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $id = $_POST["id"];
     $tanggal = $_POST["tanggal"];
     $posisi = $_POST["posisi"];
     $perusahaan = $_POST["perusahaan"];
     $ket = $_POST["ket"];
 
-    // Update data di tabel dengan teks yang diedit
-    $updateQuery = "UPDATE experience SET tanggal = '$tanggal', posisi = '$posisi', perusahaan = '$perusahaan', ket = '$ket' WHERE id = $id";
-    $updateResult = $connection->query($updateQuery);
+    // Insert data ke tabel
+    $insertQuery = "INSERT INTO experience (tanggal, posisi, perusahaan, ket) VALUES ('$tanggal', '$posisi', '$perusahaan', '$ket')";
+    $insertResult = $connection->query($insertQuery);
 
-    if ($updateResult) {
+    if ($insertResult) {
         // Redirect ke halaman lain jika perlu
         header("Location: experience.php");
         exit();
     } else {
-        echo "Error dalam memperbarui data: " . $connection->error;
+        echo "Error dalam menambahkan data: " . $connection->error;
     }
 }
+
+// Menutup koneksi ke database
+$connection->close();
 ?>

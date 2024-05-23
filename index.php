@@ -24,37 +24,37 @@
 
     <!-- Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
-    
+
     <?php
-// Konfigurasi koneksi database
-$host = "localhost"; // Ganti dengan nama host database Anda
-$username = "root"; // Ganti dengan nama pengguna database Anda
-$password = ""; // Ganti dengan kata sandi database Anda
-$database = "portfolio"; // Ganti dengan nama database Anda
+    // Konfigurasi koneksi database
+    $host = "localhost"; // Ganti dengan nama host database Anda
+    $username = "root"; // Ganti dengan nama pengguna database Anda
+    $password = ""; // Ganti dengan kata sandi database Anda
+    $database = "portfolio"; // Ganti dengan nama database Anda
 
-// Membuat koneksi ke database
-$connection = new mysqli($host, $username, $password, $database);
+    // Membuat koneksi ke database
+    $connection = new mysqli($host, $username, $password, $database);
 
-// Memeriksa apakah koneksi berhasil
-if ($connection->connect_error) {
-    die("Koneksi database gagal: " . $connection->connect_error);
-}
+    // Memeriksa apakah koneksi berhasil
+    if ($connection->connect_error) {
+        die("Koneksi database gagal: " . $connection->connect_error);
+    }
 
-// Mendapatkan data "About Me" dari database
-$query_about = "SELECT isi_about FROM about"; // Ganti "nama_tabel" dengan nama tabel yang sesuai
-$result_about = $connection->query($query_about);
+    // Mendapatkan data "About Me" dari database
+    $query_about = "SELECT isi_about FROM about"; // Ganti "nama_tabel" dengan nama tabel yang sesuai
+    $result_about = $connection->query($query_about);
 
-if ($result_about && $result_about->num_rows > 0) {
-    $row_about = $result_about->fetch_assoc();
-    $about_me = $row_about["isi_about"];
-} else {
-    $about_me = "Data About Me tidak ditemukan.";
-}
-?>
+    if ($result_about && $result_about->num_rows > 0) {
+        $row_about = $result_about->fetch_assoc();
+        $about_me = $row_about["isi_about"];
+    } else {
+        $about_me = "Data About Me tidak ditemukan.";
+    }
+    ?>
 </head>
 
 <body data-spy="scroll" data-target=".navbar" data-offset="51">
-    
+
     <!-- Nav Bar Lama Start -->
     <div class="navbar navbar-expand-lg bg-light navbar-light">
         <div class="container-fluid">
@@ -227,7 +227,7 @@ if ($result_about && $result_about->num_rows > 0) {
                 <h2>EXPERIENCE</h2>
             </header>
             <div class="timeline">
-            <div class="container">
+                <div class="container">
                     <?php
                     // Langkah 1: Buat koneksi ke database
                     $conn = mysqli_connect('localhost', 'root', '', 'portfolio');
@@ -244,18 +244,19 @@ if ($result_about && $result_about->num_rows > 0) {
                     // Langkah 3: Tampilkan data dalam loop
                     $isRight = true; // Flag untuk menentukan posisi item di timeline
                     while ($row = mysqli_fetch_assoc($result)) {
-                        ?>
-                        <div class="timeline-item <?php echo ($isRight) ? 'right' : 'left'; ?> wow slideIn<?php echo ($isRight) ? 'Right' : 'Left'; ?>" data-wow-delay="0.1s">
-                            <div class="timeline-text">
-                                <div class="timeline-date"><?php echo $row['tanggal']; ?></div>
-                                <h2><?php echo $row['posisi']; ?></h2>
-                                <h4><?php echo $row['perusahaan']; ?></h4>
-                                <p>
-                                    <?php echo $row['ket']; ?>
-                                </p>
-                            </div>
+                    ?>
+                    <div class="timeline-item <?php echo ($isRight) ? 'right' : 'left'; ?> wow slideIn<?php echo ($isRight) ? 'Right' : 'Left'; ?>"
+                        data-wow-delay="0.1s">
+                        <div class="timeline-text">
+                            <div class="timeline-date"><?php echo $row['tanggal']; ?></div>
+                            <h2><?php echo $row['posisi']; ?></h2>
+                            <h4><?php echo $row['perusahaan']; ?></h4>
+                            <p>
+                                <?php echo $row['ket']; ?>
+                            </p>
                         </div>
-                        <?php
+                    </div>
+                    <?php
                         // Toggle flag untuk mengubah posisi item di timeline
                         $isRight = !$isRight;
                     }
@@ -372,7 +373,8 @@ if ($result_about && $result_about->num_rows > 0) {
                     <div class="work-box certificate">
                         <a href="img/sertifikat/IT Support Google_Yoki Valianda_1.png" data-lightbox="gallery-mf">
                             <div class="work-img">
-                                <img src="img/sertifikat/IT Support Google_Yoki Valianda_1.png" alt="" class="img-fluid">
+                                <img src="img/sertifikat/IT Support Google_Yoki Valianda_1.png" alt=""
+                                    class="img-fluid">
                             </div>
                             <div class="work-content">
                                 <div class="row">
@@ -1032,44 +1034,44 @@ if ($result_about && $result_about->num_rows > 0) {
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        $(document).ready(function () {
-            // Tampilkan semua item portofolio saat halaman dimuat
-            $(".work-box").show();
+    $(document).ready(function() {
+        // Tampilkan semua item portofolio saat halaman dimuat
+        $(".work-box").show();
 
-            // Tangkap klik pada tombol filter
-            $(".filter-btn").on("click", function () {
-                // Dapatkan nilai filter dari tombol yang diklik
-                var filterValue = $(this).attr("data-filter");
+        // Tangkap klik pada tombol filter
+        $(".filter-btn").on("click", function() {
+            // Dapatkan nilai filter dari tombol yang diklik
+            var filterValue = $(this).attr("data-filter");
 
-                // Sembunyikan semua item portofolio
-                $(".work-box").hide();
+            // Sembunyikan semua item portofolio
+            $(".work-box").hide();
 
-                // Tampilkan item portofolio yang sesuai dengan filter
-                if (filterValue === "all") {
-                    $(".work-box").show();
-                } else {
-                    $('.' + filterValue).show();
-                }
-            });
+            // Tampilkan item portofolio yang sesuai dengan filter
+            if (filterValue === "all") {
+                $(".work-box").show();
+            } else {
+                $('.' + filterValue).show();
+            }
         });
+    });
     </script>
 
     <script>
-        $(document).ready(function () {
-            $(".work-box").show();
+    $(document).ready(function() {
+        $(".work-box").show();
 
-            $(".filter-btn").on("click", function () {
-                var filterValue = $(this).attr("data-filter");
+        $(".filter-btn").on("click", function() {
+            var filterValue = $(this).attr("data-filter");
 
-                $(".work-box").hide(0, function () {
-                    if (filterValue === "all") {
-                        $(".work-box").show(400);
-                    } else {
-                        $(".work-box").filter("." + filterValue).show(400);
-                    }
-                });
+            $(".work-box").hide(0, function() {
+                if (filterValue === "all") {
+                    $(".work-box").show(400);
+                } else {
+                    $(".work-box").filter("." + filterValue).show(400);
+                }
             });
         });
+    });
     </script>
 
 </body>
