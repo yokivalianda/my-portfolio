@@ -1,1083 +1,508 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="id">
 <head>
-    <meta charset="utf-8">
-    <title>My Portfolio</title>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="Portfolio Yoki Valianda" name="keywords">
-    <meta content="Portfolio Yoki Valianda" name="description">
+  <meta charset="utf-8">
+  <title>Yoki Valianda — IT Professional</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Portfolio Yoki Valianda — IT System Administrator & IT Support Specialist">
+  <link href="img/favicon.ico" rel="icon">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="lib/lightbox/css/lightbox.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --bg:#f0f4ff; --bg2:#ffffff; --bg3:#f8faff; --card:#ffffff;
+      --border:#dde4f0; --accent:#2563eb; --accent2:#0ea5e9;
+      --soft:#eff4ff; --text:#1e293b; --muted:#64748b;
+      --shadow:0 4px 24px rgba(37,99,235,0.08);
+      --shadow-lg:0 12px 48px rgba(37,99,235,0.13);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{background:var(--bg);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;line-height:1.7;overflow-x:hidden}
+    h1,h2,h3,h4,h5{font-family:'Syne',sans-serif}
+    ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--accent);border-radius:3px}
 
-    <!-- Favicon -->
-    <link href="img/favicon.ico" rel="icon">
+    /* LOADER */
+    #page-loader{position:fixed;inset:0;z-index:9999;background:linear-gradient(155deg,#eef2ff,#f0f8ff 50%,#f8faff);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.25rem;transition:opacity 0.5s}
+    .ll-logo{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:var(--text)}
+    .ll-logo span{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .ll-bar{width:200px;height:3px;background:#dde4f0;border-radius:2px;overflow:hidden}
+    .ll-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;animation:llbar 1.8s ease infinite}
+    @keyframes llbar{0%{width:0%;margin-left:0%}50%{width:70%;margin-left:0%}100%{width:0%;margin-left:100%}}
+    .ll-txt{font-size:0.82rem;color:var(--muted)}
 
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
+    /* FIREBASE BADGE */
+    #fb-badge{position:fixed;bottom:1.5rem;left:1.5rem;z-index:500;display:inline-flex;align-items:center;gap:0.4rem;background:white;border:1px solid var(--border);border-radius:100px;padding:0.4rem 0.85rem;font-size:0.72rem;font-weight:600;color:var(--muted);box-shadow:var(--shadow)}
+    #fb-badge .dot{width:7px;height:7px;border-radius:50%}
+    #fb-badge.connected .dot{background:#22c55e;animation:pg 2s infinite}
+    #fb-badge.error .dot{background:#ef4444}
+    #fb-badge.loading .dot{background:#f59e0b;animation:pg 2s infinite}
 
-    <!-- CSS Libraries -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
-    <link href="lib/animate/animate.min.css" rel="stylesheet">
-    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
-    <link href="lib/lightbox/css/lightbox.min.css" rel="stylesheet">
+    /* NAVBAR */
+    .navbar{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:0 4rem;height:68px;background:rgba(240,244,255,0.82);backdrop-filter:blur(20px);border-bottom:1px solid transparent;transition:all 0.3s}
+    .navbar.scrolled{background:rgba(255,255,255,0.96);border-bottom-color:var(--border);box-shadow:0 2px 20px rgba(37,99,235,0.07)}
+    .nav-brand{font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem;color:var(--text);text-decoration:none}
+    .nav-brand span{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .nav-links{display:flex;gap:0.2rem;list-style:none}
+    .nav-links a{color:var(--muted);text-decoration:none;font-size:0.84rem;font-weight:500;padding:0.4rem 0.85rem;border-radius:8px;transition:all 0.2s}
+    .nav-links a:hover,.nav-links a.active{color:var(--accent);background:var(--soft);font-weight:600}
+    .nav-cta{display:flex;align-items:center;gap:0.75rem}
+    .nav-pill{display:inline-flex;align-items:center;gap:0.4rem;background:var(--accent);color:white;font-size:0.8rem;font-weight:600;padding:0.4rem 1rem;border-radius:100px;text-decoration:none;transition:all 0.2s;box-shadow:0 4px 14px rgba(37,99,235,0.28)}
+    .nav-pill:hover{background:#1d4ed8;color:white;transform:translateY(-1px)}
+    .nav-admin{color:var(--muted);font-size:0.78rem;text-decoration:none;padding:0.35rem 0.75rem;border:1px solid var(--border);border-radius:8px;transition:all 0.2s}
+    .nav-admin:hover{color:var(--accent);border-color:var(--accent)}
+    .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px}
+    .hamburger span{width:24px;height:2px;background:var(--text);border-radius:2px}
 
-    <!-- Template Stylesheet -->
-    <link href="css/style.css" rel="stylesheet">
+    /* HERO */
+    #home{min-height:100vh;display:flex;align-items:center;padding:110px 4rem 80px;position:relative;overflow:hidden;background:linear-gradient(155deg,#eef2ff 0%,#f0f8ff 45%,#f8faff 100%)}
+    .blob{position:absolute;border-radius:50%;filter:blur(70px);opacity:0.45;pointer-events:none}
+    .b1{width:520px;height:520px;background:#bfdbfe;top:-120px;right:2%}
+    .b2{width:360px;height:360px;background:#c7d2fe;bottom:-100px;left:8%}
+    .b3{width:260px;height:260px;background:#bae6fd;top:38%;right:28%}
+    .hero-wrap{position:relative;z-index:1;max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1.1fr 1fr;gap:4rem;align-items:center;width:100%}
+    .eyebrow{display:inline-flex;align-items:center;gap:0.6rem;background:white;border:1px solid #bfdbfe;color:var(--accent);font-size:0.78rem;font-weight:600;padding:0.35rem 0.9rem;border-radius:100px;margin-bottom:1.5rem;box-shadow:0 2px 12px rgba(37,99,235,0.1)}
+    .pdot{width:7px;height:7px;background:#22c55e;border-radius:50%;animation:pg 2s infinite}
+    @keyframes pg{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,0.5)}50%{box-shadow:0 0 0 5px rgba(34,197,94,0)}}
+    .hero-left h1{font-size:clamp(2.8rem,5vw,4.2rem);font-weight:800;line-height:1.08;color:var(--text);margin-bottom:0.5rem}
+    .ngrad{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .hero-role{font-size:1.05rem;color:var(--muted);font-weight:400;margin-bottom:1.5rem}
+    .hero-role strong{color:var(--accent);font-weight:600}
+    .hero-desc{color:var(--muted);max-width:460px;font-size:0.95rem;line-height:1.85;margin-bottom:2.5rem}
+    .hero-btns{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:3rem}
+    .btn-blue{display:inline-flex;align-items:center;gap:0.5rem;background:var(--accent);color:white;font-family:'Syne',sans-serif;font-weight:600;font-size:0.9rem;padding:0.75rem 1.75rem;border-radius:10px;text-decoration:none;box-shadow:0 4px 16px rgba(37,99,235,0.3);transition:all 0.25s}
+    .btn-blue:hover{background:#1d4ed8;transform:translateY(-2px);color:white}
+    .btn-ghost{display:inline-flex;align-items:center;gap:0.5rem;background:white;color:var(--text);font-family:'Syne',sans-serif;font-weight:600;font-size:0.9rem;padding:0.75rem 1.75rem;border-radius:10px;text-decoration:none;border:1.5px solid var(--border);box-shadow:var(--shadow);transition:all 0.25s}
+    .btn-ghost:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px)}
+    .hero-stats{display:flex;gap:2.5rem;padding-top:2rem;border-top:1px solid var(--border)}
+    .snum{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .slbl{font-size:0.73rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px}
+    .hero-right{display:flex;justify-content:center;align-items:center}
+    .hero-card{position:relative;background:white;border-radius:28px;padding:8px;width:340px;box-shadow:var(--shadow-lg);border:1px solid var(--border)}
+    .hero-photo{border-radius:22px;overflow:hidden;aspect-ratio:3/4}
+    .hero-photo img{width:100%;height:100%;object-fit:cover;object-position:top}
+    .fbadge{position:absolute;background:white;border:1px solid var(--border);border-radius:14px;padding:0.65rem 1rem;display:flex;align-items:center;gap:0.6rem;box-shadow:0 4px 20px rgba(0,0,0,0.08);font-size:0.8rem}
+    .fbadge-1{top:20px;right:-28px}.fbadge-2{bottom:40px;left:-28px}
+    .bico{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:0.9rem}
+    .bico.blue{background:#eff6ff;color:var(--accent)}.bico.sky{background:#e0f2fe;color:var(--accent2)}
+    .bname{font-weight:600;color:var(--text);line-height:1.2}.bsub{color:var(--muted);font-size:0.7rem}
+
+    /* SECTIONS */
+    section{padding:100px 4rem}
+    .container{max-width:1200px;margin:0 auto}
+    .slabel{display:inline-flex;align-items:center;gap:0.5rem;color:var(--accent);font-size:0.76rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:0.75rem}
+    .slabel::before{content:'';width:20px;height:2px;background:var(--accent);border-radius:2px}
+    .stitle{font-size:clamp(1.75rem,2.8vw,2.4rem);font-weight:800;color:var(--text);line-height:1.2;margin-bottom:0.9rem}
+    .ssub{color:var(--muted);max-width:520px;font-size:0.95rem}
+
+    /* ABOUT */
+    #about{background:white}
+    .about-grid{display:grid;grid-template-columns:1fr 1.3fr;gap:5rem;align-items:center}
+    .aimg-wrap{position:relative}
+    .aimg{border-radius:24px;overflow:hidden;aspect-ratio:4/5;box-shadow:var(--shadow-lg);border:1px solid var(--border)}
+    .aimg img{width:100%;height:100%;object-fit:cover}
+    .abadge{position:absolute;bottom:-20px;right:-20px;background:linear-gradient(135deg,var(--accent),var(--accent2));padding:1.25rem 1.5rem;border-radius:18px;text-align:center;color:white;box-shadow:0 8px 32px rgba(37,99,235,0.35)}
+    .abadge .n{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;display:block}
+    .abadge .l{font-size:0.7rem;opacity:0.85;text-transform:uppercase;letter-spacing:1px}
+    .abody p{color:var(--muted);line-height:1.9;margin-bottom:1.25rem;font-size:0.95rem}
+    .skills-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.65rem;margin-top:1.75rem}
+    .schip{display:flex;align-items:center;gap:0.6rem;background:var(--soft);border:1px solid #bfdbfe;border-radius:10px;padding:0.6rem 0.9rem;font-size:0.84rem;color:var(--text);font-weight:500;transition:all 0.2s}
+    .schip i{color:var(--accent);font-size:0.75rem}
+    .schip:hover{background:#dbeafe;border-color:var(--accent)}
+
+    /* SERVICES */
+    #service{background:var(--bg)}
+    .svc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.5rem;margin-top:3rem}
+    .svc-card{background:white;border:1px solid var(--border);border-radius:18px;padding:2rem;transition:all 0.3s;box-shadow:0 2px 12px rgba(37,99,235,0.04)}
+    .svc-card:hover{border-color:#93c5fd;transform:translateY(-5px);box-shadow:0 16px 40px rgba(37,99,235,0.12)}
+    .sico{width:52px;height:52px;background:var(--soft);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;color:var(--accent);margin-bottom:1.25rem;border:1px solid #bfdbfe}
+    .svc-card h3{font-size:1rem;color:var(--text);margin-bottom:0.65rem}
+    .svc-card p{color:var(--muted);font-size:0.875rem;line-height:1.7}
+
+    /* EXPERIENCE */
+    #experience{background:white}
+    .exp-tabs{display:inline-flex;gap:0.35rem;background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:5px;margin-bottom:3rem}
+    .etab{padding:0.5rem 1.35rem;border-radius:9px;font-family:'Syne',sans-serif;font-size:0.84rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.2s;border:none;background:none}
+    .etab.active{background:white;color:var(--accent);box-shadow:0 2px 10px rgba(37,99,235,0.1)}
+    .epanel{display:none}.epanel.active{display:block}
+    .timeline{position:relative;padding-left:1.75rem}
+    .timeline::before{content:'';position:absolute;left:0;top:6px;bottom:0;width:2px;background:linear-gradient(to bottom,var(--accent),#bfdbfe 60%,transparent);border-radius:2px}
+    .tli{position:relative;padding-bottom:2rem}
+    .tli::before{content:'';position:absolute;left:-22px;top:6px;width:11px;height:11px;background:var(--accent);border-radius:50%;box-shadow:0 0 0 4px #eff6ff,0 0 0 6px #bfdbfe}
+    .tdate{font-size:0.73rem;color:var(--accent);font-weight:700;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:0.4rem}
+    .tcard{background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:1.25rem 1.5rem;transition:border-color 0.2s}
+    .tcard:hover{border-color:#93c5fd}
+    .tcard h3{font-size:1rem;color:var(--text);margin-bottom:0.2rem}
+    .tcard h4{font-size:0.83rem;color:var(--muted);font-weight:500;margin-bottom:0.65rem}
+    .tcard p{font-size:0.875rem;color:var(--muted);line-height:1.7;white-space:pre-line}
+
+    /* PORTFOLIO */
+    #portfolio{background:var(--bg)}
+    .frow{display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:2.5rem}
+    .fbtn{padding:0.45rem 1.1rem;border-radius:100px;font-size:0.82rem;font-weight:500;border:1.5px solid var(--border);background:white;color:var(--muted);cursor:pointer;transition:all 0.2s}
+    .fbtn:hover,.fbtn.active{background:var(--accent);border-color:var(--accent);color:white;box-shadow:0 4px 14px rgba(37,99,235,0.25)}
+    .pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.25rem}
+    .pitem{position:relative;border-radius:16px;overflow:hidden;background:white;border:1px solid var(--border);aspect-ratio:4/3;cursor:pointer;box-shadow:0 2px 12px rgba(37,99,235,0.05);transition:all 0.3s}
+    .pitem img{width:100%;height:100%;object-fit:cover;transition:transform 0.4s}
+    .pitem:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(37,99,235,0.14);border-color:#93c5fd}
+    .pitem:hover img{transform:scale(1.06)}
+    .pover{position:absolute;inset:0;background:linear-gradient(to top,rgba(15,23,42,0.88),rgba(15,23,42,0.3) 60%,transparent);opacity:0;transition:opacity 0.3s;display:flex;flex-direction:column;justify-content:flex-end;padding:1.25rem}
+    .pitem:hover .pover{opacity:1}
+    .pcat{font-size:0.7rem;color:#7dd3fc;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.25rem}
+    .ptitle{font-family:'Syne',sans-serif;font-size:0.9rem;color:white;font-weight:600}
+    .pzoom{position:absolute;top:1rem;right:1rem;width:36px;height:36px;background:white;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:0.8rem;opacity:0;transform:scale(0.7);transition:all 0.3s;box-shadow:0 2px 10px rgba(0,0,0,0.1)}
+    .pitem:hover .pzoom{opacity:1;transform:scale(1)}
+
+    /* FOOTER */
+    footer{background:#1e293b;padding:4.5rem 4rem 2rem}
+    .fgrid{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:3.5rem;max-width:1200px;margin:0 auto}
+    .fbrand{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;color:white;margin-bottom:0.75rem}
+    .fbrand span{color:#60a5fa}
+    .fdesc{color:#94a3b8;font-size:0.875rem;line-height:1.75;margin-bottom:1.5rem}
+    .fsocials{display:flex;gap:0.65rem}
+    .fsa{width:38px;height:38px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:9px;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:0.88rem;text-decoration:none;transition:all 0.2s}
+    .fsa:hover{background:var(--accent);border-color:var(--accent);color:white}
+    .fcol h5{font-size:0.8rem;font-weight:700;color:white;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:1.25rem}
+    .flinks{list-style:none}.flinks li{margin-bottom:0.6rem}
+    .flinks a{color:#94a3b8;font-size:0.875rem;text-decoration:none;transition:color 0.2s}
+    .flinks a:hover{color:#60a5fa}
+    .fcontact{display:flex;flex-direction:column;gap:0.75rem}
+    .fci{display:flex;align-items:flex-start;gap:0.75rem;color:#94a3b8;font-size:0.875rem}
+    .fci i{color:#60a5fa;margin-top:3px;flex-shrink:0}
+    .fbottom{max-width:1200px;margin:3rem auto 0;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:space-between}
+    .fcopy{color:#64748b;font-size:0.8rem}
+    .fcopy a{color:#60a5fa;text-decoration:none}
+    .btop{width:38px;height:38px;background:var(--accent);border-radius:9px;display:flex;align-items:center;justify-content:center;color:white;text-decoration:none;font-size:0.85rem;transition:all 0.2s}
+    .btop:hover{background:#1d4ed8;transform:translateY(-3px);color:white}
+
+    .fade-up{opacity:0;transform:translateY(28px);transition:opacity 0.65s ease,transform 0.65s ease}
+    .fade-up.visible{opacity:1;transform:translateY(0)}
+
+    @media(max-width:1024px){.navbar{padding:0 2rem}section{padding:80px 2rem}footer{padding:3.5rem 2rem 1.5rem}#home{padding:100px 2rem 60px}.hero-wrap{grid-template-columns:1fr}.hero-right{display:none}.about-grid{grid-template-columns:1fr}.fgrid{grid-template-columns:1fr 1fr}}
+    @media(max-width:768px){.nav-links{display:none}.nav-links.open{display:flex;flex-direction:column;position:fixed;top:68px;left:0;right:0;background:rgba(255,255,255,0.98);backdrop-filter:blur(20px);padding:1.5rem 2rem;border-bottom:1px solid var(--border);box-shadow:0 8px 24px rgba(0,0,0,0.08);gap:0.25rem}.hamburger{display:flex}.fgrid{grid-template-columns:1fr;gap:2.5rem}.fbottom{flex-direction:column;gap:1rem;text-align:center}.skills-grid{grid-template-columns:1fr}.hero-stats{flex-wrap:wrap;gap:1.5rem}}
+  </style>
 </head>
+<body>
 
-<body data-spy="scroll" data-target=".navbar" data-offset="51">
-    
-    <!-- Nav Bar Lama Start -->
-    <div class="navbar navbar-expand-lg bg-light navbar-light">
-        <div class="container-fluid">
-            <a href="index.html" class="navbar-brand">MY PORTFOLIO</a>
-            <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+<div id="page-loader">
+  <div class="ll-logo">Yoki<span>V.</span></div>
+  <div class="ll-bar"><div class="ll-fill"></div></div>
+  <div class="ll-txt">Memuat data portfolio...</div>
+</div>
 
-            <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
-                <div class="navbar-nav ml-auto">
-                    <a href="#home" class="nav-item nav-link active">HOME</a>
-                    <a href="#about" class="nav-item nav-link">ABOUT</a>
-                    <a href="#service" class="nav-item nav-link">SERVICE</a>
-                    <a href="#experience" class="nav-item nav-link">EXPERIENCE</a>
-                    <a href="#portfolio" class="nav-item nav-link">PORTFOLIO</a>
-                    <a href="#socialmedia" class="nav-item nav-link">SOCIAL MEDIA</a>
-                </div>
-            </div>
-        </div>
+<div id="fb-badge" class="loading"><span class="dot"></span><span id="fb-txt">Menghubungkan...</span></div>
+
+<nav class="navbar" id="navbar">
+  <a href="#home" class="nav-brand">Yoki<span>V.</span></a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#home" class="active">Home</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#service">Services</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#portfolio">Portfolio</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="nav-cta">
+    <a href="#" id="nav-wa" class="nav-pill" target="_blank"><i class="fab fa-whatsapp"></i> Hubungi</a>
+    <a href="admin.html" class="nav-admin"><i class="fas fa-lock" style="font-size:.65rem;margin-right:3px;"></i>Admin</a>
+    <button class="hamburger" id="ham"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<section id="home">
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+  <div class="hero-wrap">
+    <div class="hero-left">
+      <div class="eyebrow"><span class="pdot"></span><span id="h-status">Available for work</span></div>
+      <h1 id="h-name">Yoki<br><span class="ngrad">Valianda</span></h1>
+      <div class="hero-role" id="h-roles">IT System Administrator &amp; <strong>IT Support Specialist</strong></div>
+      <p class="hero-desc" id="h-desc">Sarjana Komputer dengan pengalaman di IT Support &amp; System Administration.</p>
+      <div class="hero-btns">
+        <a href="#" id="h-cv" class="btn-blue" download><i class="fas fa-download"></i> Download CV</a>
+        <a href="#" id="h-wa" class="btn-ghost" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+      </div>
+      <div class="hero-stats">
+        <div><div class="snum" id="h-s1n">3+</div><div class="slbl" id="h-s1l">Tahun Pengalaman</div></div>
+        <div><div class="snum" id="h-s2n">3.71</div><div class="slbl" id="h-s2l">IPK S1</div></div>
+        <div><div class="snum" id="h-s3n">20+</div><div class="slbl" id="h-s3l">Sertifikat</div></div>
+      </div>
     </div>
-    <!-- Nav Bar Lama End -->
-
-
-    <!-- Hero Start -->
-    <div class="hero" id="home">
-        <div class="container-fluid">
-            <div class="row align-items-center">
-                <div class="col-sm-12 col-md-6">
-                    <div class="hero-content">
-                        <div class="hero-text">
-                            <p>I'm</p>
-                            <h1>Yoki Valianda</h1>
-                            <h2></h2>
-                            <div class="typed-text">IT System Administrator, IT Support, Freelancer </div>
-                        </div>
-                        <div class="hero-btn">
-                            <a class="btn" href="resume/CV_Yoki_Valianda.pdf">Download CV</a>
-                            <a class="btn" href="Https://Wa.me/6285156355799">Contact Me</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-md-6 d-none d-md-block">
-                    <div class="hero-image">
-                        <img src="img/foto.png" alt="Foto" class="rounded-image">
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="hero-right">
+      <div class="hero-card">
+        <div class="hero-photo"><img src="img/foto.png" alt="Yoki Valianda"></div>
+        <div class="fbadge fbadge-1"><div class="bico blue"><i class="fas fa-server"></i></div><div><div class="bname">IT Sysadmin</div><div class="bsub">PT. Marisa Inti</div></div></div>
+        <div class="fbadge fbadge-2"><div class="bico sky"><i class="fas fa-keyboard"></i></div><div><div class="bname">100 WPM</div><div class="bsub">Typing Speed</div></div></div>
+      </div>
     </div>
-    <!-- Hero End -->
+  </div>
+</section>
 
-
-    <!-- About Start -->
-    <div class="about wow fadeInUp" data-wow-delay="0.1s" id="about">
-        <div class="container-fluid">
-            <div class="row align-items-center">
-                <div class="col-lg-6">
-                    <div class="about-img">
-                        <img src="img/about.jpg" alt="Image">
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="about-content">
-                        <div class="section-header text-left">
-                            <p style="background-color: #f5f5f5;">About Me</p>
-                        </div>
-                        <div class="about-text">
-                            <p class="lead">
-                                Saya adalah lulusan sarjana komputer dengan minat berkarir di bidang IT Support. Selama perjalanan
-                                akademik, saya telah memperoleh pengetahuan dan keterampilan yang mendalam dalam mengatasi
-                                berbagai masalah teknis dan dukungan IT serta memperoleh sertifikasi kompetensi pada bidang IT
-                                Support. Selain memiliki latar belakang pendidikan dalam komputer, saya juga memiliki keahlian khusus
-                                dalam mengetik dengan sepuluh jari. Saya telah berlatih dengan tekun selama lebih dari 2 tahun, dan
-                                mencapai kecepatan mengetik antara 50-100 kata per menit (KPM). Keahlian mengetik saya telah diakui
-                                melalui sertifikasi kompetensi di bidang tersebut.
-                            </p>
-                        </div>
-                        <div class="section-header text-left">
-                            <p style="background-color: #f5f5f5;">Skills</p>
-                        </div>
-                        <ul class="lead">
-                            <li>Operating Computers</li>
-                            <li>IT Support Spesialist</li>
-                            <li>10-finger Typing Speed</li>
-                            <li>Microsoft Word</li>
-                            <li>Microsoft Excel</li>
-                            <li>Microsoft Powerpoint</li>
-                            <li>Computers Networking</li>
-                        </ul>
-                        <!-- <a class="btn" href="">Learn More</a> -->
-                    </div>
-                </div>
-            </div>
-        </div>
+<section id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="aimg-wrap fade-up">
+        <div class="aimg"><img src="img/about.jpg" alt="About Yoki"></div>
+        <div class="abadge"><span class="n">3+</span><span class="l">Years<br>Experience</span></div>
+      </div>
+      <div class="abody fade-up">
+        <span class="slabel">About Me</span>
+        <h2 class="stitle">Passionate About<br>Technology &amp; IT Solutions</h2>
+        <p id="ab-p1">Memuat...</p><p id="ab-p2"></p>
+        <div class="skills-grid" id="skills-container"></div>
+      </div>
     </div>
-    <!-- About End -->
+  </div>
+</section>
 
-
-    <!-- Service Start -->
-    <div class="service" id="service">
-        <div class="container">
-            <div class="section-header text-center wow zoomIn" data-wow-delay="0.1s">
-                <p style="background-color: #f5f5f5;">What I do</p>
-                <h2>QUALITY SERVICES</h2>
-            </div>
-            <div class="row">
-                <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.0s">
-                    <div class="service-item">
-                        <div class="service-icon">
-                            <i class="fa fa-laptop"></i>
-                        </div>
-                        <div class="service-text">
-                            <h3>Installation Operating System</h3>
-                            <p>
-                                Saya bertanggung jawab melakukan instalasi sistem operasi komputer, termasuk persiapan
-                                media instalasi, pengaturan partisi, dan konfigurasi awal.
-                                Saya memastikan proses instalasi berjalan lancar dan sistem operasi berfungsi dengan
-                                baik.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.2s">
-                    <div class="service-item">
-                        <div class="service-icon">
-                            <i class="fa fa-laptop-code"></i>
-                        </div>
-                        <div class="service-text">
-                            <h3>Maintenance PC</h3>
-                            <p>
-                                Seringkali, saya terlibat dalam melakukan analisis dan penyelesaian masalah komputer
-                                ketika menghadapi kendala,
-                                dengan tekad kuat untuk mengembalikannya ke kondisi semula yang optimal agar komputer
-                                bisa digunakan kembali.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <!-- <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.4s">
-                        <div class="service-item">
-                            <div class="service-icon">
-                                <i class="fab fa-android"></i>
-                            </div>
-                            <div class="service-text">
-                                <h3>Apps Design</h3>
-                                <p>
-                                    Lorem ipsum dolor sit amet elit. Phase nec preti mi. Curabi facilis ornare velit non
-                                </p>
-                            </div>
-                        </div>
-                    </div> -->
-                <!-- <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.6s">
-                        <div class="service-item">
-                            <div class="service-icon">
-                                <i class="fab fa-apple"></i>
-                            </div>
-                            <div class="service-text">
-                                <h3>Apps Development</h3>
-                                <p>
-                                    Lorem ipsum dolor sit amet elit. Phase nec preti mi. Curabi facilis ornare velit non
-                                </p>
-                            </div>
-                        </div>
-                    </div> -->
-            </div>
-        </div>
+<section id="service">
+  <div class="container">
+    <div style="text-align:center" class="fade-up">
+      <span class="slabel" style="justify-content:center">What I Do</span>
+      <h2 class="stitle" style="margin:0 auto">Quality Services</h2>
+      <p class="ssub" style="margin:0.75rem auto 0">Layanan profesional berdasarkan pengalaman dan keahlian di bidang IT.</p>
     </div>
-    <!-- Service End -->
+    <div class="svc-grid" id="services-container"></div>
+  </div>
+</section>
 
-
-    <!-- Experience Start -->
-    <div class="experience" id="experience">
-        <div class="container">
-            <header class="section-header text-center wow zoomIn" data-wow-delay="0.1s">
-                <p style="background-color: #f5f5f5;">My Resume</p>
-                <h2>EXPERIENCE</h2>
-            </header>
-            <div class="timeline">
-                <div class="timeline-item left wow slideInLeft" data-wow-delay="0.1s">
-                    <div class="timeline-text">
-                        <div class="timeline-date">Maret 2024 - Saat ini</div>
-                        <h2>IT System Administrator</h2>
-                        <h4>PT. Marisa Inti Teknologi, Palembang. </h4>
-                        <p>
-                            • Mengelola dan memantau sistem pada website servis laptop konsumen untuk memastikan kelancaran operasional. <br> 
-                            • Memberikan dukungan teknis kepada teknisi dalam menyelesaikan masalah software dan hardware pada laptop konsumen. <br>
-                            • Membantu teknisi dalam diagnosis masalah dan menyarankan solusi terbaik. <br>
-                            • Melakukan pembelian sparepart secara online sesuai kebutuhan perbaikan laptop. <br>
-                            • Menjaga hubungan baik dengan supplier dan memastikan ketersediaan sparepart yang diperlukan. <br>
-                            • Melakukan konfirmasi kepada konsumen mengenai kerusakan laptop yang mereka alami. <br>
-                            • Memberikan update kepada konsumen mengenai status perbaikan laptop mereka dan menginformasikan saat perbaikan selesai. <br>
-                            • Menganalisis kinerja laptop/komputer dan memberikan rekomendasi peningkatan sistem untuk meningkatkan performa dan efisiensi.
-                        </p>
-                    </div>
-                </div>
-                <div class="timeline-item right wow slideInRight" data-wow-delay="0.1s">
-                    <div class="timeline-text">
-                        <div class="timeline-date">Juni 2023 - Agustus 2023</div>
-                        <h2>IT Support Trainee</h2>
-                        <h4>Digital Talent Scholarship, Indonesia</h4>
-                        <p>
-                            Topik yang dipelajari dalam program beasiswa IT Support digitalent sebagai berikut. <br>
-                            • Dasar-dasar Dukungan Teknis. <br>
-                            • Seluk Beluk Jaringan Komputer. <br>
-                            • Sistem Operasi. <br>
-                            • Administrasi Sistem dan Layanan Infrastruktur IT. <br>
-                            • Keamanan IT: Pertahanan terhadap Kejahatan Digital.
-                        </p>
-                    </div>
-                </div>
-                <div class="timeline-item left wow slideInLeft" data-wow-delay="0.1s">
-                    <div class="timeline-text">
-                        <div class="timeline-date">Mei 2019 - Saat ini</div>
-                        <h2>Freelancer</h2>
-                        <h4>Riset Pasar, Indonesia</h4>
-                        <p>
-                            • Melakukan isi survei berbayar di berbagai platform internet. <br>
-                            • Affiliate di platform Tokopedia dan Shopee.
-                        </p>
-                    </div>
-                </div>
-                <div class="timeline-item right wow slideInRight" data-wow-delay="0.1s">
-                    <div class="timeline-text">
-                        <div class="timeline-date">Maret 2021 - April 2021</div>
-                        <h2>Admin Marketing</h2>
-                        <h4>Internship, PT. DUA PUTRA ASURO, Palembang</h4>
-                        <p>
-                            • Melakukan pemasaran produk. <br>
-                            • Membuat projek website penjualan.
-                        </p>
-                    </div>
-                </div>
-                <div class="timeline-item left wow slideInLeft" data-wow-delay="0.1s">
-                    <div class="timeline-text">
-                        <div class="timeline-date">Agustus 2016 - November 2016</div>
-                        <h2>Admin</h2>
-                        <h4>Internship, PT. SUGIH RAHAYU BAHAGIA, Palembang</h4>
-                        <p>
-                            • Membantu pengarsipan dan pengetikan dokumen di kantor. <br>
-                            • Membantu dalam pengelolaan berbagai dokumen.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
+<section id="experience">
+  <div class="container">
+    <span class="slabel fade-up">Resume</span>
+    <h2 class="stitle fade-up">Experience &amp; Education</h2>
+    <p class="ssub fade-up" style="margin-bottom:2.5rem">Perjalanan profesional dan pendidikan saya hingga saat ini.</p>
+    <div class="exp-tabs fade-up">
+      <button class="etab active" data-panel="work">Work</button>
+      <button class="etab" data-panel="edu">Education</button>
+      <button class="etab" data-panel="org">Organization</button>
     </div>
-    <!-- Job Experience End -->
+    <div class="epanel active" id="ep-work"><div class="timeline" id="work-container"></div></div>
+    <div class="epanel" id="ep-edu"><div class="timeline" id="edu-container"></div></div>
+    <div class="epanel" id="ep-org"><div class="timeline" id="org-container"></div></div>
+  </div>
+</section>
 
-    <!-- Pendidikan Start -->
-    <div class="experience" id="experience">
-        <div class="container">
-            <header class="section-header text-center wow zoomIn" data-wow-delay="0.1s">
-                <h2>EDUCATION</h2>
-            </header>
-            <div class="timeline">
-                <div class="timeline-item right wow slideInRight" data-wow-delay="0.1s">
-                    <div class="timeline-text">
-                        <div class="timeline-date">Oktober 2018 - Agustus 2022</div>
-                        <h2>Sarjana Komputer</h2>
-                        <h4>S1 Informatika, Institut Teknologi dan Bisnis PalComTech, Palembang</h4>
-                        <p>
-                            Dengan kegigihan dan dedikasi yang tak kenal lelah, saya berhasil meraih IPK 3.71 yang
-                            membanggakan disertai pujian selama perjalanan kuliah saya.
-                        </p>
-                    </div>
-                </div>
-                <div class="timeline-item left wow slideInLeft" data-wow-delay="0.1s">
-                    <div class="timeline-text">
-                        <div class="timeline-date">Maret 2021 - April 2021</div>
-                        <h2>Teknik Komputer dan Jaringan </h2>
-                        <h4>SMK Utama Bakti Palembang, Palembang</h4>
-                        <p>
-                            Dengan pemahaman yang kuat tentang hardware dan software dalam ilmu komputer,
-                            serta pemahaman dasar tentang jaringan komputer LAN/WAN,
-                            saya memiliki keterampilan yang mumpuni dalam merakit PC dan menyelesaikan berbagai masalah
-                            terkait hardware dan software.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
+<section id="portfolio">
+  <div class="container">
+    <span class="slabel fade-up">My Work</span>
+    <h2 class="stitle fade-up">Portfolio</h2>
+    <p class="ssub fade-up" style="margin-bottom:2.5rem">Kumpulan karya dan sertifikat yang telah saya peroleh.</p>
+    <div class="frow fade-up">
+      <button class="fbtn active" data-filter="all">Semua</button>
+      <button class="fbtn" data-filter="certificate">Sertifikat</button>
+      <button class="fbtn" data-filter="web-dev">Web Development</button>
+      <button class="fbtn" data-filter="result-test">Typing Test</button>
     </div>
-    <!-- Pendidikan End -->
+    <div class="pgrid" id="portfolio-container"></div>
+  </div>
+</section>
 
-
-    <!-- Organisasi Start -->
-    <div class="experience" id="experience">
-        <div class="container">
-            <header class="section-header text-center wow zoomIn" data-wow-delay="0.1s">
-                <h2>ORGANIZATION EXPERIENCE</h2>
-            </header>
-            <div class="timeline">
-                <div class="timeline-item left wow slideInLeft" data-wow-delay="0.1s">
-                    <div class="timeline-text">
-                        <div class="timeline-date">Oktober 2019 - September 2020</div>
-                        <h2>Ketua</h2>
-                        <h4>Organisasi UKM PalComTech Programming, Palembang</h4>
-                        <p>
-                            • Mengkoordinasikan kegiatan belajar. <br>
-                            • Melakukan dokumentasi pembelajaran. <br>
-                            • Membuat laporan bulanan pembelajaran.
-                        </p>
-                    </div>
-                </div>
-                <div class="timeline-item right wow slideInRight" data-wow-delay="0.1s">
-                    <div class="timeline-text">
-                        <div class="timeline-date">September 2020 - September 2020</div>
-                        <h2>Sukarelawan</h2>
-                        <h4>Institut Teknologi dan Bisnis PalComTech, Palembang</h4>
-                        <p>
-                            Memimpin dan mengkoordinasikan anggota kelompok dalam acara kegiatan Pengenalan Kehidupan
-                            Kampus Mahasiswa Baru (PKKMB).
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
+<footer id="contact">
+  <div class="fgrid">
+    <div>
+      <div class="fbrand">Yoki<span>V.</span></div>
+      <p class="fdesc" id="f-desc">IT System Administrator & IT Support Specialist berbasis di Palembang, Indonesia.</p>
+      <div class="fsocials">
+        <a href="#" id="f-fb" class="fsa" target="_blank"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" id="f-ig" class="fsa" target="_blank"><i class="fab fa-instagram"></i></a>
+        <a href="#" id="f-li" class="fsa" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+        <a href="#" id="f-email" class="fsa"><i class="fas fa-envelope"></i></a>
+      </div>
     </div>
-    <!-- Organisasi End -->
-
-
-
-    <!--/ Section Portfolio Star /-->
-    <section class="portfolio-mf sect-pt4 route" id="portfolio">
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="title-box text-center">
-                        <h3 class="title-a">
-                            Portfolio
-                        </h3>
-                        <p class="subtitle-a">
-                            Berikut adalah kumpulan karya-karya saya beserta koleksi sertifikat yang saya peroleh.
-                        </p>
-                        <div class="line-mf"></div> <br>
-                        <div class="filter-btn-group text-center">
-                            <button class="btn btn-primary filter-btn" data-filter="all">All</button>
-                            <button class="btn btn-primary filter-btn" data-filter="certificate">Certificate</button>
-                            <button class="btn btn-primary filter-btn" data-filter="web-dev">Web Development</button>
-                            <button class="btn btn-primary filter-btn" data-filter="result-test">Result Typing</button>
-                            <!-- Tambahkan tombol filter lainnya sesuai kebutuhan -->
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="work-box certificate">
-                        <a href="img/sertifikat/IT Support Google_Yoki Valianda_1.png" data-lightbox="gallery-mf">
-                            <div class="work-img">
-                                <img src="img/sertifikat/IT Support Google_Yoki Valianda_1.png" alt="" class="img-fluid">
-                            </div>
-                            <div class="work-content">
-                                <div class="row">
-                                    <div class="col-sm-8">
-                                        <h2 class="w-title">IT Support Google</h2>
-                                        <div class="w-more">
-                                            <span class="w-ctegory">Certificate</span> / <span class="w-date">01
-                                                Agustus 2023</span>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="w-like">
-                                            <span class="ion-ios-plus-outline"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="work-box certificate">
-                        <a href="img/sertifikat/Sistem Operasi.png" data-lightbox="gallery-mf">
-                            <div class="work-img">
-                                <img src="img/sertifikat/Sistem Operasi.png" alt="" class="img-fluid">
-                            </div>
-                            <div class="work-content">
-                                <div class="row">
-                                    <div class="col-sm-8">
-                                        <h2 class="w-title">Sistem Operasi</h2>
-                                        <div class="w-more">
-                                            <span class="w-ctegory">Certificate</span> / <span class="w-date">07
-                                                Juli 2023</span>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="w-like">
-                                            <span class="ion-ios-plus-outline"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="work-box certificate">
-                        <a href="img/sertifikat/Seluk beluk jaringan komputer.png" data-lightbox="gallery-mf">
-                            <div class="work-img">
-                                <img src="img/sertifikat/Seluk beluk jaringan komputer.png" alt="" class="img-fluid">
-                            </div>
-                            <div class="work-content">
-                                <div class="row">
-                                    <div class="col-sm-8">
-                                        <h2 class="w-title">Jaringan Komputer</h2>
-                                        <div class="w-more">
-                                            <span class="w-ctegory">Certificate</span> / <span class="w-date">23
-                                                Juni 2023</span>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="w-like">
-                                            <span class="ion-ios-plus-outline"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="work-box web-dev">
-                        <a href="img/SS Menu Dashboard V2.png" data-lightbox="gallery-mf">
-                            <div class="work-img">
-                                <img src="img/SS Menu Dashboard V2.png" alt="" class="img-fluid">
-                            </div>
-                            <div class="work-content">
-                                <div class="row">
-                                    <div class="col-sm-8">
-                                        <h2 class="w-title">Dashboard Admin Wedding Decoration</h2>
-                                        <div class="w-more">
-                                            <span class="w-ctegory">Web Development</span> / <span class="w-date">28
-                                                November 2022</span>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="w-like">
-                                            <span class="ion-ios-plus-outline"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="work-box web-dev">
-                        <a href="img/dashboard admin.jpeg" data-lightbox="gallery-mf">
-                            <div class="work-img">
-                                <img src="img/dashboard admin.jpeg" alt="" class="img-fluid">
-                            </div>
-                            <div class="work-content">
-                                <div class="row">
-                                    <div class="col-sm-8">
-                                        <h2 class="w-title">Dashboard SPK</h2>
-                                        <div class="w-more">
-                                            <span class="w-ctegory">Web Development</span> / <span class="w-date">02
-                                                Agustus 2023</span>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="w-like">
-                                            <span class="ion-ios-plus-outline"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="work-box web-dev">
-                        <a href="img/login.jpeg" data-lightbox="gallery-mf">
-                            <div class="work-img">
-                                <img src="img/login.jpeg" alt="" class="img-fluid">
-                            </div>
-                            <div class="work-content">
-                                <div class="row">
-                                    <div class="col-sm-8">
-                                        <h2 class="w-title">Form Login SPK</h2>
-                                        <div class="w-more">
-                                            <span class="w-ctegory">Web Development</span> / <span class="w-date">02
-                                                Agustus 2023</span>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="w-like">
-                                            <span class="ion-ios-plus-outline"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="work-box result-test">
-                        <a href="img/typingtest.png" data-lightbox="gallery-mf">
-                            <div class="work-img">
-                                <img src="img/typingtest.png" alt="" class="img-fluid">
-                            </div>
-                            <div class="work-content">
-                                <div class="row">
-                                    <div class="col-sm-8">
-                                        <h2 class="w-title">Typing Test in 10FastFinger</h2>
-                                        <div class="w-more">
-                                            <span class="w-ctegory">Certificate</span> / <span class="w-date">28
-                                                November 2022</span>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="w-like">
-                                            <span class="ion-ios-plus-outline"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="work-box result-test">
-                        <a href="img/monkeytype.png" data-lightbox="gallery-mf">
-                            <div class="work-img">
-                                <img src="img/monkeytype.png" alt="" class="img-fluid">
-                            </div>
-                            <div class="work-content">
-                                <div class="row">
-                                    <div class="col-sm-8">
-                                        <h2 class="w-title">Typing Test in MonkeyType</h2>
-                                        <div class="w-more">
-                                            <span class="w-ctegory">Certificate</span> / <span class="w-date">02 Juni
-                                                2022</span>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="w-like">
-                                            <span class="ion-ios-plus-outline"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="work-box result-test">
-                        <a href="img/mybestwpm.jpg" data-lightbox="gallery-mf">
-                            <div class="work-img">
-                                <img src="img/mybestwpm.jpg" alt="" class="img-fluid">
-                            </div>
-                            <div class="work-content">
-                                <div class="row">
-                                    <div class="col-sm-8">
-                                        <h2 class="w-title">Best Record Typing in MonkeyType</h2>
-                                        <div class="w-more">
-                                            <span class="w-ctegory">Certificate</span> / <span class="w-date">19 November 2022</span>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="w-like">
-                                            <span class="ion-ios-plus-outline"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="work-box certificate">
-                        <a href="img/sertifikat/jaringanpng_Page1.png" data-lightbox="gallery-mf">
-                            <div class="work-img">
-                                <img src="img/sertifikat/jaringanpng_Page1.png" alt="" class="img-fluid">
-                            </div>
-                            <div class="work-content">
-                                <div class="row">
-                                    <div class="col-sm-8">
-                                        <h2 class="w-title">Network Admin & IT Support</h2>
-                                        <div class="w-more">
-                                            <span class="w-ctegory">Certificate</span> / <span class="w-date">06
-                                                November 2022</span>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="w-like">
-                                            <span class="ion-ios-plus-outline"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="work-box certificate">
-                        <a href="img/sertifikat/teknisipng_Page2.png" data-lightbox="gallery-mf">
-                            <div class="work-img">
-                                <img src="img/sertifikat/teknisipng_Page1.png" alt="" class="img-fluid">
-                            </div>
-                            <div class="work-content">
-                                <div class="row">
-                                    <div class="col-sm-8">
-                                        <h2 class="w-title">Teknisi Komputer</h2>
-                                        <div class="w-more">
-                                            <span class="w-ctegory">Certificate</span> / <span class="w-date">02
-                                                November 2022</span>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="w-like">
-                                            <span class="ion-ios-plus-outline"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="work-box certificate">
-                        <a href="img/sertifikat/mswordpng_Page1.png" data-lightbox="gallery-mf">
-                            <div class="work-img">
-                                <img src="img/sertifikat/mswordpng_Page1.png" alt="" class="img-fluid">
-                            </div>
-                            <div class="work-content">
-                                <div class="row">
-                                    <div class="col-sm-8">
-                                        <h2 class="w-title">Mini Course Microsoft Word</h2>
-                                        <div class="w-more">
-                                            <span class="w-ctegory">Certificate</span> / <span class="w-date">14
-                                                November 2022</span>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="w-like">
-                                            <span class="ion-ios-plus-outline"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="work-box certificate">
-                        <a href="img/sertifikat/beginnerpng_Page1.png" data-lightbox="gallery-mf">
-                            <div class="work-img">
-                                <img src="img/sertifikat/beginnerpng_Page1.png" alt="" class="img-fluid">
-                            </div>
-                            <div class="work-content">
-                                <div class="row">
-                                    <div class="col-sm-8">
-                                        <h2 class="w-title">Beginner Typing Test</h2>
-                                        <div class="w-more">
-                                            <span class="w-ctegory">Certificate</span> / <span class="w-date">01
-                                                Februari 2020</span>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="w-like">
-                                            <span class="ion-ios-plus-outline"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="work-box certificate">
-                        <a href="img/sertifikat/intermediatepng_Page1.png" data-lightbox="gallery-mf">
-                            <div class="work-img">
-                                <img src="img/sertifikat/intermediatepng_Page1.png" alt="" class="img-fluid">
-                            </div>
-                            <div class="work-content">
-                                <div class="row">
-                                    <div class="col-sm-8">
-                                        <h2 class="w-title">Intermediate Typing Test</h2>
-                                        <div class="w-more">
-                                            <span class="w-ctegory">Certificate</span> / <span class="w-date">20 April
-                                                2020</span>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="w-like">
-                                            <span class="ion-ios-plus-outline"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="work-box certificate">
-                        <a href="img/sertifikat/advanced.png" data-lightbox="gallery-mf">
-                            <div class="work-img">
-                                <img src="img/sertifikat/advanced.png" alt="" class="img-fluid">
-                            </div>
-                            <div class="work-content">
-                                <div class="row">
-                                    <div class="col-sm-8">
-                                        <h2 class="w-title">Advanced Typing Test</h2>
-                                        <div class="w-more">
-                                            <span class="w-ctegory">Certificate</span> / <span class="w-date">03
-                                                November 2021</span>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="w-like">
-                                            <span class="ion-ios-plus-outline"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="work-box certificate">
-                        <a href="img/sertifikat/hack4idpng_Page1.png" data-lightbox="gallery-mf">
-                            <div class="work-img">
-                                <img src="img/sertifikat/hack4idpng_Page1.png" alt="" class="img-fluid">
-                            </div>
-                            <div class="work-content">
-                                <div class="row">
-                                    <div class="col-sm-8">
-                                        <h2 class="w-title">Workshop Hack4ID</h2>
-                                        <div class="w-more">
-                                            <span class="w-ctegory">Certificate</span> / <span class="w-date">20 Mei
-                                                2023</span>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="w-like">
-                                            <span class="ion-ios-plus-outline"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="work-box certificate">
-                        <a href="img/sertifikat/minicoursepng_Page1.png" data-lightbox="gallery-mf">
-                            <div class="work-img">
-                                <img src="img/sertifikat/minicoursepng_Page1.png" alt="" class="img-fluid">
-                            </div>
-                            <div class="work-content">
-                                <div class="row">
-                                    <div class="col-sm-8">
-                                        <h2 class="w-title">Mini Course Digital Marketing</h2>
-                                        <div class="w-more">
-                                            <span class="w-ctegory">Certificate</span> / <span class="w-date">31 Maret
-                                                2023</span>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="w-like">
-                                            <span class="ion-ios-plus-outline"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="work-box certificate">
-                        <a href="img/sertifikat/webinar_kitalulus_freelancerpng_Page1.png" data-lightbox="gallery-mf">
-                            <div class="work-img">
-                                <img src="img/sertifikat/webinar_kitalulus_freelancerpng_Page1.png" alt=""
-                                    class="img-fluid">
-                            </div>
-                            <div class="work-content">
-                                <div class="row">
-                                    <div class="col-sm-8">
-                                        <h2 class="w-title">Webinar Freelancer</h2>
-                                        <div class="w-more">
-                                            <span class="w-ctegory">Certificate</span> / <span class="w-date">27 Mei
-                                                2023</span>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="w-like">
-                                            <span class="ion-ios-plus-outline"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="work-box certificate">
-                        <a href="img/sertifikat/dicodingpng_Page1.png" data-lightbox="gallery-mf">
-                            <div class="work-img">
-                                <img src="img/sertifikat/dicodingpng_Page1.png" alt="" class="img-fluid">
-                            </div>
-                            <div class="work-content">
-                                <div class="row">
-                                    <div class="col-sm-8">
-                                        <h2 class="w-title">Programming Logic</h2>
-                                        <div class="w-more">
-                                            <span class="w-ctegory">Certificate</span> / <span class="w-date">21
-                                                Februari 2021</span>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="w-like">
-                                            <span class="ion-ios-plus-outline"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="work-box certificate">
-                        <a href="img/sertifikat/dicoding2png_Page1.png" data-lightbox="gallery-mf">
-                            <div class="work-img">
-                                <img src="img/sertifikat/dicoding2png_Page1.png" alt="" class="img-fluid">
-                            </div>
-                            <div class="work-content">
-                                <div class="row">
-                                    <div class="col-sm-8">
-                                        <h2 class="w-title">Webinar Dicoding UX Design</h2>
-                                        <div class="w-more">
-                                            <span class="w-ctegory">Certificate</span> / <span class="w-date">03
-                                                November 2021</span>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="w-like">
-                                            <span class="ion-ios-plus-outline"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="work-box certificate">
-                        <a href="img/sertifikat/dicoding3png_Page1.png" data-lightbox="gallery-mf">
-                            <div class="work-img">
-                                <img src="img/sertifikat/dicoding3png_Page1.png" alt="" class="img-fluid">
-                            </div>
-                            <div class="work-content">
-                                <div class="row">
-                                    <div class="col-sm-8">
-                                        <h2 class="w-title">Webinar Dicoding Produk Digital</h2>
-                                        <div class="w-more">
-                                            <span class="w-ctegory">Certificate</span> / <span class="w-date">30 Oktober
-                                                2021</span>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="w-like">
-                                            <span class="ion-ios-plus-outline"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="work-box certificate">
-                        <a href="img/sertifikat/gapuradigitalpng_Page1.png" data-lightbox="gallery-mf">
-                            <div class="work-img">
-                                <img src="img/sertifikat/gapuradigitalpng_Page2.png" alt="" class="img-fluid">
-                            </div>
-                            <div class="work-content">
-                                <div class="row">
-                                    <div class="col-sm-8">
-                                        <h2 class="w-title">Pelatihan Gapura Digital</h2>
-                                        <div class="w-more">
-                                            <span class="w-ctegory">Certificate</span> / <span class="w-date">26 Januari
-                                                2020</span>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="w-like">
-                                            <span class="ion-ios-plus-outline"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="work-box certificate">
-                        <a href="img/sertifikat/preinexuspng_Page1.png" data-lightbox="gallery-mf">
-                            <div class="work-img">
-                                <img src="img/sertifikat/preinexuspng_Page1.png" alt="" class="img-fluid">
-                            </div>
-                            <div class="work-content">
-                                <div class="row">
-                                    <div class="col-sm-8">
-                                        <h2 class="w-title">HTML5 for Web Development</h2>
-                                        <div class="w-more">
-                                            <span class="w-ctegory">Certificate</span> / <span class="w-date">17 Januari
-                                                2022</span>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="w-like">
-                                            <span class="ion-ios-plus-outline"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="work-box web-dev">
-                        <a href="img/Halaman Utama V2.png" data-lightbox="gallery-mf">
-                            <div class="work-img">
-                                <img src="img/Halaman Utama V2.png" alt="" class="img-fluid">
-                            </div>
-                            <div class="work-content">
-                                <div class="row">
-                                    <div class="col-sm-8">
-                                        <h2 class="w-title">Landing Page Wedding Decoration</h2>
-                                        <div class="w-more">
-                                            <span class="w-ctegory">Web Development</span> / <span class="w-date">28
-                                                November 2022</span>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="w-like">
-                                            <span class="ion-ios-plus-outline"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!--/ Section Portfolio End /-->
-
-
-    <!-- Footer Start -->
-    <div class="footer wow fadeIn" data-wow-delay="0.6s">
-        <div class="container-fluid" id="socialmedia">
-            <div class="container">
-                <div class="footer-info">
-                    <h2>My Address</h2>
-                    <h3>Wilayah Ilir Barat 1, Kota Palembang, Indonesia</h3>
-                    <div class="footer-menu">
-                        <p>Social Media</p>
-                    </div>
-                    <div class="footer-social">
-                        <a href="https://web.facebook.com/yokivalianda/"><i class="fab fa-facebook-f"></i></a>
-                        <a href="https://www.instagram.com/yoki_vld77/"><i class="fab fa-instagram"></i></a>
-                        <a href="https://www.linkedin.com/in/yoki-valianda/"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="mailto:yokivalianda14@gmail.com"><i class="fab fa-google"></i></a>
-                    </div>
-                </div>
-            </div>
-            <div class="container copyright">
-                <p>&copy; <a href="#">Copyright 2024</a>, All Right Reserved | Designed By <a href="#">Yoki Valianda</a>
-                </p>
-            </div>
-        </div>
+    <div class="fcol">
+      <h5>Quick Links</h5>
+      <ul class="flinks"><li><a href="#home">Home</a></li><li><a href="#about">About</a></li><li><a href="#service">Services</a></li><li><a href="#experience">Experience</a></li><li><a href="#portfolio">Portfolio</a></li></ul>
     </div>
-    <!-- Footer End -->
-
-
-    <!-- Back to top button -->
-    <a href="#" class="btn back-to-top"><i class="fa fa-chevron-up"></i></a>
-
-
-    <!-- Pre Loader -->
-    <div id="loader" class="show">
-        <div class="loader"></div>
+    <div class="fcol">
+      <h5>Contact</h5>
+      <div class="fcontact">
+        <div class="fci"><i class="fas fa-map-marker-alt"></i><span id="f-addr">Palembang, Indonesia</span></div>
+        <div class="fci"><i class="fas fa-envelope"></i><span id="f-emailtxt">-</span></div>
+        <div class="fci"><i class="fab fa-whatsapp"></i><span id="f-watxt">-</span></div>
+      </div>
     </div>
+  </div>
+  <div class="fbottom">
+    <p class="fcopy" id="f-copy">&copy; 2024 <a href="#">Yoki Valianda</a>. All rights reserved.</p>
+    <a href="#home" class="btop"><i class="fas fa-chevron-up"></i></a>
+  </div>
+</footer>
 
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="lib/lightbox/js/lightbox.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <!-- JavaScript Libraries -->
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
-    <script src="lib/easing/easing.min.js"></script>
-    <script src="lib/wow/wow.min.js"></script>
-    <script src="lib/waypoints/waypoints.min.js"></script>
-    <script src="lib/typed/typed.min.js"></script>
-    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
-    <script src="lib/isotope/isotope.pkgd.min.js"></script>
-    <script src="lib/lightbox/js/lightbox.min.js"></script>
+<script>
+// ── DEFAULT DATA (fallback jika Firestore kosong) ──────────────
+const DEF = {
+  profile:{name:'Yoki Valianda',roles:'IT System Administrator, IT Support, Freelancer',status:'Available for work',wa:'6285156355799',cv:'resume/CV_Yoki_Valianda.pdf',email:'yokivalianda14@gmail.com',desc:'Sarjana Komputer dengan pengalaman di IT Support & System Administration. Berpengalaman dalam troubleshooting, networking, dan manajemen sistem. Berdomisili di Palembang, Indonesia.',s1n:'3+',s1l:'Tahun Pengalaman',s2n:'3.71',s2l:'IPK S1',s3n:'20+',s3l:'Sertifikat'},
+  about:{p1:'Saya adalah lulusan Sarjana Komputer dengan minat kuat dalam bidang IT Support dan System Administration.',p2:'Selain latar belakang IT, saya memiliki keahlian mengetik 10 jari tersertifikasi dengan kecepatan 50–100 WPM.',skills:['Operating Systems','IT Support Specialist','Computer Networking','10-Finger Typing','Microsoft Office Suite','Hardware Maintenance']},
+  services:[{title:'Instalasi Sistem Operasi',icon:'fas fa-laptop',desc:'Instalasi OS komputer lengkap termasuk persiapan media, pengaturan partisi, dan konfigurasi awal untuk performa optimal.'},{title:'Maintenance PC',icon:'fas fa-tools',desc:'Analisis dan penyelesaian masalah hardware/software untuk mengembalikan performa optimal.'},{title:'Jaringan Komputer',icon:'fas fa-network-wired',desc:'Konfigurasi dan troubleshooting jaringan LAN/WAN untuk konektivitas stabil dan aman.'},{title:'IT Support Teknis',icon:'fas fa-headset',desc:'Dukungan teknis komprehensif untuk pengguna akhir, diagnosis masalah dan solusi cepat.'}],
+  experience:[{date:'Maret 2024 – Sekarang',title:'IT System Administrator',company:'PT. Marisa Inti Teknologi, Palembang',desc:'Mengelola sistem website servis laptop, memberikan dukungan teknis, pembelian sparepart, konfirmasi konsumen.'},{date:'Juni 2023 – Agustus 2023',title:'IT Support Trainee',company:'Digital Talent Scholarship, Indonesia',desc:'Pelatihan: Dukungan Teknis, Jaringan Komputer, Sistem Operasi, Administrasi Sistem, Keamanan IT.'},{date:'Maret 2021 – April 2021',title:'Admin Marketing (Internship)',company:'PT. DUA PUTRA ASURO, Palembang',desc:'Pemasaran produk dan pengembangan proyek website penjualan.'},{date:'Agustus 2016 – November 2016',title:'Admin (Internship)',company:'PT. SUGIH RAHAYU BAHAGIA, Palembang',desc:'Pengarsipan, pengetikan dokumen, dan pengelolaan berbagai dokumen kantor.'}],
+  education:[{date:'Oktober 2018 – Agustus 2022',title:'Sarjana Komputer — S1 Informatika',institution:'Institut Teknologi dan Bisnis PalComTech, Palembang',desc:'Meraih IPK 3.71 dengan predikat pujian.'},{date:'SMK',title:'Teknik Komputer dan Jaringan',institution:'SMK Utama Bakti Palembang',desc:'Hardware, software, dan dasar-dasar jaringan LAN/WAN.'}],
+  organization:[{date:'Oktober 2019 – September 2020',title:'Ketua UKM Programming',org:'PalComTech Programming Club, Palembang',desc:'Mengkoordinasikan kegiatan belajar dan membuat laporan bulanan.'},{date:'September 2020',title:'Sukarelawan PKKMB',org:'Institut Teknologi dan Bisnis PalComTech',desc:'Memimpin kelompok mahasiswa baru dalam kegiatan PKKMB.'}],
+  portfolio:[{title:'Landing Page Wedding Decoration',cat:'web-dev',catLabel:'Web Development',img:'img/Halaman Utama V2.png'},{title:'Dashboard Admin Wedding',cat:'web-dev',catLabel:'Web Development',img:'img/SS Menu Dashboard V2.png'},{title:'Dashboard SPK',cat:'web-dev',catLabel:'Web Development',img:'img/dashboard admin.jpeg'},{title:'Form Login SPK',cat:'web-dev',catLabel:'Web Development',img:'img/login.jpeg'},{title:'IT Support Google',cat:'certificate',catLabel:'Certificate',img:'img/sertifikat/IT Support Google_Yoki Valianda_1.png'},{title:'Network Admin & IT Support',cat:'certificate',catLabel:'Certificate',img:'img/sertifikat/jaringanpng_Page1.png'},{title:'Teknisi Komputer',cat:'certificate',catLabel:'Certificate',img:'img/sertifikat/teknisipng_Page1.png'},{title:'Advanced Typing Test',cat:'certificate',catLabel:'Certificate',img:'img/sertifikat/advanced.png'},{title:'Dasar-dasar Dukungan Teknis',cat:'certificate',catLabel:'Certificate',img:'img/sertifikat/Dasar-dasar dukungan teknis.png'},{title:'Sistem Operasi',cat:'certificate',catLabel:'Certificate',img:'img/sertifikat/Sistem Operasi.png'},{title:'Workshop Hack4ID',cat:'certificate',catLabel:'Certificate',img:'img/sertifikat/hack4idpng_Page1.png'},{title:'Programming Logic – Dicoding',cat:'certificate',catLabel:'Certificate',img:'img/sertifikat/dicodingpng_Page1.png'},{title:'Typing Test – 10FastFingers',cat:'result-test',catLabel:'Result Typing',img:'img/typingtest.png'},{title:'Typing Test – MonkeyType',cat:'result-test',catLabel:'Result Typing',img:'img/monkeytype.png'},{title:'Best WPM Record – MonkeyType',cat:'result-test',catLabel:'Result Typing',img:'img/mybestwpm.jpg'}],
+  social:{fb:'https://web.facebook.com/yokivalianda/',ig:'https://www.instagram.com/yoki_vld77/',li:'https://www.linkedin.com/in/yoki-valianda/',email:'yokivalianda14@gmail.com',addr:'Ilir Barat 1, Kota Palembang, Indonesia',copy:'© 2024 Yoki Valianda. All rights reserved.'}
+};
 
-    <!-- Contact Javascript File -->
-    <script src="mail/jqBootstrapValidation.min.js"></script>
-    <script src="mail/contact.js"></script>
+// ── FIREBASE ───────────────────────────────────────────────────
+let db = null;
+function setFbStatus(cls, txt) {
+  const b = document.getElementById('fb-badge');
+  b.className = cls; document.getElementById('fb-txt').textContent = txt;
+}
+try {
+  firebase.initializeApp(FIREBASE_CONFIG);
+  db = firebase.firestore();
+} catch(e) {
+  console.warn('Firebase init gagal:', e);
+  setFbStatus('error', 'Mode Offline');
+  renderAll(DEF); hideLoader();
+}
 
-    <!-- Template Javascript -->
-    <script src="js/main.js"></script>
+// ── LOAD FIRESTORE ─────────────────────────────────────────────
+async function loadData() {
+  const data = JSON.parse(JSON.stringify(DEF)); // deep copy default
+  const ARRAY_DOCS = ['services','experience','education','organization','portfolio'];
+  try {
+    const snaps = await Promise.all(
+      ['profile','about','services','experience','education','organization','portfolio','social']
+      .map(name => db.collection('portfolio').doc(name).get())
+    );
+    snaps.forEach(snap => {
+      if (!snap.exists) return;
+      const name = snap.id; const d = snap.data();
+      if (ARRAY_DOCS.includes(name)) {
+        if (d.items && d.items.length) data[name] = d.items;
+      } else if (name === 'about') {
+        data.about = { p1: d.p1||DEF.about.p1, p2: d.p2||DEF.about.p2, skills: d.skills||DEF.about.skills };
+      } else {
+        data[name] = { ...DEF[name], ...d };
+      }
+    });
+    setFbStatus('firebase-badge connected', 'Firebase Terhubung ✓');
+  } catch(e) {
+    console.warn('Gagal baca Firestore:', e);
+    setFbStatus('firebase-badge error', 'Gagal Terhubung');
+  }
+  return data;
+}
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            // Tampilkan semua item portofolio saat halaman dimuat
-            $(".work-box").show();
+// ── RENDER ─────────────────────────────────────────────────────
+function renderAll(d) {
+  renderProfile(d.profile);
+  renderAbout(d.about);
+  renderServices(d.services);
+  renderTL('work-container', d.experience, 'company');
+  renderTL('edu-container', d.education, 'institution');
+  renderTL('org-container', d.organization, 'org');
+  renderPortfolio(d.portfolio);
+  renderSocial(d.social);
+}
 
-            // Tangkap klik pada tombol filter
-            $(".filter-btn").on("click", function () {
-                // Dapatkan nilai filter dari tombol yang diklik
-                var filterValue = $(this).attr("data-filter");
+function renderProfile(p) {
+  document.getElementById('h-status').textContent = p.status || 'Available for work';
+  const nm = (p.name||'Yoki Valianda').split(' ');
+  document.getElementById('h-name').innerHTML = nm[0]+'<br><span class="ngrad">'+nm.slice(1).join(' ')+'</span>';
+  const roles = (p.roles||'').split(',');
+  document.getElementById('h-roles').innerHTML = (roles[0]||'').trim() + (roles[1] ? ' &amp; <strong>' + roles[1].trim() + '</strong>' : '');
+  document.getElementById('h-desc').textContent = p.desc||'';
+  const wa = 'https://wa.me/'+(p.wa||'');
+  document.getElementById('h-wa').href = wa;
+  document.getElementById('nav-wa').href = wa;
+  document.getElementById('h-cv').href = p.cv||'#';
+  ['s1n','s1l','s2n','s2l','s3n','s3l'].forEach(k => { const el=document.getElementById('h-'+k); if(el) el.textContent=p[k]||''; });
+}
 
-                // Sembunyikan semua item portofolio
-                $(".work-box").hide();
+function renderAbout(a) {
+  document.getElementById('ab-p1').textContent = a.p1||'';
+  document.getElementById('ab-p2').textContent = a.p2||'';
+  document.getElementById('skills-container').innerHTML = (a.skills||[]).map(s=>`<div class="schip"><i class="fas fa-check-circle"></i> ${s}</div>`).join('');
+}
 
-                // Tampilkan item portofolio yang sesuai dengan filter
-                if (filterValue === "all") {
-                    $(".work-box").show();
-                } else {
-                    $('.' + filterValue).show();
-                }
-            });
-        });
-    </script>
+function renderServices(list) {
+  document.getElementById('services-container').innerHTML = (list||[]).map(s=>
+    `<div class="svc-card fade-up"><div class="sico"><i class="${s.icon||'fas fa-cog'}"></i></div><h3>${s.title}</h3><p>${s.desc}</p></div>`
+  ).join('');
+  reObserve();
+}
 
-    <script>
-        $(document).ready(function () {
-            $(".work-box").show();
+function renderTL(cid, list, orgKey) {
+  document.getElementById(cid).innerHTML = (list||[]).map(item=>
+    `<div class="tli fade-up"><div class="tdate">${item.date||''}</div>
+    <div class="tcard"><h3>${item.title||''}</h3><h4>${item[orgKey]||item.company||item.institution||item.org||''}</h4><p>${item.desc||''}</p></div></div>`
+  ).join('');
+  reObserve();
+}
 
-            $(".filter-btn").on("click", function () {
-                var filterValue = $(this).attr("data-filter");
+function renderPortfolio(list) {
+  document.getElementById('portfolio-container').innerHTML = (list||[]).map(p=>
+    `<div class="pitem ${p.cat||''} fade-up">
+      <a href="${p.img}" data-lightbox="port" data-title="${p.title}">
+        <img src="${p.img}" alt="${p.title}" loading="lazy">
+        <div class="pover"><div class="pcat">${p.catLabel||p.cat||''}</div><div class="ptitle">${p.title}</div></div>
+        <div class="pzoom"><i class="fas fa-expand-alt"></i></div>
+      </a></div>`
+  ).join('');
+  reObserve();
+}
 
-                $(".work-box").hide(0, function () {
-                    if (filterValue === "all") {
-                        $(".work-box").show(400);
-                    } else {
-                        $(".work-box").filter("." + filterValue).show(400);
-                    }
-                });
-            });
-        });
-    </script>
+function renderSocial(s) {
+  document.getElementById('f-fb').href = s.fb||'#';
+  document.getElementById('f-ig').href = s.ig||'#';
+  document.getElementById('f-li').href = s.li||'#';
+  document.getElementById('f-email').href = 'mailto:'+(s.email||'');
+  document.getElementById('f-addr').textContent = s.addr||'';
+  document.getElementById('f-emailtxt').textContent = s.email||'';
+  document.getElementById('f-watxt').textContent = (s.wa ? '+'+s.wa : '');
+  document.getElementById('f-copy').innerHTML = s.copy||'';
+}
 
+function hideLoader() {
+  setTimeout(()=>{
+    const l=document.getElementById('page-loader');
+    l.style.opacity='0';
+    setTimeout(()=>l.style.display='none',500);
+  },700);
+}
+
+// ── OBSERVERS & EVENTS ─────────────────────────────────────────
+const obsInst = new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible')}),{threshold:0.1});
+function reObserve(){document.querySelectorAll('.fade-up:not(.visible)').forEach(el=>obsInst.observe(el));}
+document.querySelectorAll('.fade-up').forEach(el=>obsInst.observe(el));
+
+window.addEventListener('scroll',()=>{
+  document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>50);
+  let cur='';
+  document.querySelectorAll('section[id],footer[id]').forEach(s=>{if(window.scrollY>=s.offsetTop-100)cur=s.id;});
+  document.querySelectorAll('.nav-links a').forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+cur));
+});
+document.getElementById('ham').addEventListener('click',()=>document.getElementById('navLinks').classList.toggle('open'));
+document.querySelectorAll('.etab').forEach(t=>t.addEventListener('click',function(){
+  document.querySelectorAll('.etab').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.epanel').forEach(x=>x.classList.remove('active'));
+  this.classList.add('active'); document.getElementById('ep-'+this.dataset.panel).classList.add('active');
+}));
+document.querySelectorAll('.fbtn').forEach(b=>b.addEventListener('click',function(){
+  document.querySelectorAll('.fbtn').forEach(x=>x.classList.remove('active'));
+  this.classList.add('active');
+  const f=this.dataset.filter;
+  document.querySelectorAll('.pitem').forEach(i=>i.style.display=(f==='all'||i.classList.contains(f))?'':'none');
+}));
+if(typeof lightbox!=='undefined') lightbox.option({resizeDuration:200,wrapAround:true});
+
+// ── BOOT ───────────────────────────────────────────────────────
+(async()=>{
+  if(db){
+    setFbStatus('firebase-badge loading','Memuat data...');
+    const data = await loadData();
+    renderAll(data);
+  }
+  hideLoader(); reObserve();
+})();
+</script>
 </body>
-
 </html>

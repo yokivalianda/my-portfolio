@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <title>Admin — Portfolio Yoki Valianda</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#f0f4ff;--bg2:#e8eeff;--card:#fff;--border:#dde4f0;
+      --accent:#2563eb;--accent2:#0ea5e9;--success:#16a34a;
+      --warning:#d97706;--danger:#dc2626;--text:#1e293b;--muted:#64748b;--soft:#eff4ff;
+      --sidebar-w:256px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{background:var(--bg);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;min-height:100vh}
+    h1,h2,h3,h4,h5{font-family:'Syne',sans-serif}
+    ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--accent);border-radius:2px}
+
+    /* ── LOADING SCREEN ── */
+    #init-screen{position:fixed;inset:0;background:linear-gradient(155deg,#eef2ff,#f0f8ff 50%,#f8faff);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;z-index:9999}
+    .is-logo{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:var(--text)}
+    .is-logo span{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .is-bar{width:180px;height:3px;background:#dde4f0;border-radius:2px;overflow:hidden}
+    .is-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;animation:isbar 1.8s ease infinite}
+    @keyframes isbar{0%{width:0%;margin-left:0%}50%{width:70%;margin-left:0%}100%{width:0%;margin-left:100%}}
+    .is-txt{font-size:0.82rem;color:var(--muted)}
+
+    /* ── LOGIN ── */
+    #loginScreen{position:fixed;inset:0;background:linear-gradient(155deg,#eef2ff,#f0f8ff 50%,#f8faff);display:none;align-items:center;justify-content:center;z-index:8000}
+    .lbox{background:white;border:1px solid var(--border);border-radius:24px;padding:2.75rem;width:100%;max-width:400px;text-align:center;box-shadow:0 20px 60px rgba(37,99,235,0.12)}
+    .l-logo{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:var(--text);margin-bottom:.2rem}
+    .l-logo span{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .l-sub{color:var(--muted);font-size:.85rem;margin-bottom:2rem}
+    .lbox label{display:block;font-size:.78rem;font-weight:700;color:var(--muted);text-align:left;margin-bottom:.4rem;text-transform:uppercase;letter-spacing:.5px}
+    .lbox input{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:.75rem 1rem;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:.95rem;margin-bottom:1.25rem;outline:none;transition:all .2s}
+    .lbox input:focus{border-color:var(--accent);background:white;box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+    .l-btn{width:100%;background:var(--accent);color:white;border:none;border-radius:10px;padding:.85rem;font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem;cursor:pointer;transition:all .2s;box-shadow:0 4px 16px rgba(37,99,235,.28)}
+    .l-btn:hover{background:#1d4ed8;transform:translateY(-1px)}
+    .l-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+    .lerr{color:var(--danger);font-size:.82rem;margin-top:.75rem;display:none}
+    .l-hint{font-size:.72rem;color:var(--muted);margin-top:1.25rem}
+
+    /* ── ADMIN LAYOUT ── */
+    #adminApp{display:none;min-height:100vh}
+    .sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-w);background:white;border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;z-index:100;box-shadow:2px 0 20px rgba(37,99,235,.05)}
+    .s-logo{padding:1.5rem;border-bottom:1px solid var(--border)}
+    .s-brand{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;color:var(--text)}
+    .s-brand span{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .s-sub{font-size:.72rem;color:var(--muted);margin-top:2px}
+    .s-user{display:flex;align-items:center;gap:.6rem;margin-top:.75rem;padding:.5rem .6rem;background:var(--soft);border-radius:8px}
+    .s-user i{color:var(--accent);font-size:.85rem}
+    .s-user span{font-size:.75rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .s-nav{padding:1rem 0;flex:1}
+    .ng{padding:.5rem 1.25rem .25rem;font-size:.67rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px}
+    .nitem{display:flex;align-items:center;gap:.7rem;padding:.6rem 1.25rem;color:var(--muted);font-size:.875rem;cursor:pointer;transition:all .2s;border-left:3px solid transparent;text-decoration:none;font-weight:500}
+    .nitem i{width:16px;text-align:center;font-size:.82rem}
+    .nitem:hover{color:var(--accent);background:var(--soft)}
+    .nitem.active{color:var(--accent);border-left-color:var(--accent);background:var(--soft);font-weight:600}
+    .s-footer{padding:1rem 1.25rem;border-top:1px solid var(--border)}
+    .logout{display:flex;align-items:center;gap:.6rem;color:var(--danger);font-size:.85rem;cursor:pointer;background:none;border:none;width:100%;padding:.5rem;border-radius:8px;transition:background .2s;font-weight:500}
+    .logout:hover{background:#fef2f2}
+    .main{margin-left:var(--sidebar-w);min-height:100vh;display:flex;flex-direction:column}
+    .topbar{position:sticky;top:0;z-index:50;background:rgba(240,244,255,.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:.85rem 2rem;display:flex;align-items:center;justify-content:space-between}
+    .tbtitle{font-size:1rem;font-weight:700;color:var(--text)}
+    .tbtitle span{color:var(--muted);font-size:.85rem;font-weight:400;margin-left:.5rem}
+    .save-btn{display:flex;align-items:center;gap:.5rem;background:var(--success);color:white;border:none;border-radius:9px;padding:.55rem 1.25rem;font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem;cursor:pointer;transition:all .2s;box-shadow:0 3px 12px rgba(22,163,74,.3)}
+    .save-btn:hover{background:#15803d;transform:translateY(-1px)}
+    .save-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+    .content{padding:2rem;flex:1}
+
+    /* ── PANELS ── */
+    .panel{display:none;animation:fi .3s ease}.panel.active{display:block}
+    @keyframes fi{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+    /* ── STATS ── */
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem}
+    .sc{background:white;border:1px solid var(--border);border-radius:14px;padding:1.25rem 1.5rem;box-shadow:0 2px 10px rgba(37,99,235,.05)}
+    .sc .lbl{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.4rem}
+    .sc .val{font-family:'Syne',sans-serif;font-size:1.75rem;font-weight:800;color:var(--text)}
+    .sc .ic{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;float:right;margin-top:-.25rem}
+    .ic-blue{background:var(--soft);color:var(--accent)}.ic-sky{background:#e0f2fe;color:var(--accent2)}
+    .ic-green{background:#dcfce7;color:var(--success)}.ic-yel{background:#fef3c7;color:var(--warning)}
+
+    /* ── FORM ── */
+    .fsec{background:white;border:1px solid var(--border);border-radius:16px;padding:1.75rem;margin-bottom:1.5rem;box-shadow:0 2px 10px rgba(37,99,235,.04)}
+    .fsec-title{font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:1.5rem;padding-bottom:.75rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.5rem}
+    .fsec-title i{color:var(--accent);font-size:.9rem}
+    .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+    .fgrid.c1{grid-template-columns:1fr}.fgrid.c3{grid-template-columns:1fr 1fr 1fr}
+    .fg{display:flex;flex-direction:column;gap:.4rem}.fg.full{grid-column:1/-1}
+    .fg label{font-size:.76rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+    .fg input,.fg textarea,.fg select{background:var(--bg);border:1.5px solid var(--border);border-radius:9px;padding:.65rem .9rem;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:.9rem;outline:none;transition:all .2s;width:100%}
+    .fg input:focus,.fg textarea:focus,.fg select:focus{border-color:var(--accent);background:white;box-shadow:0 0 0 3px rgba(37,99,235,.08)}
+    .fg textarea{resize:vertical;min-height:100px}
+
+    /* ── LIST ITEMS ── */
+    .lc{display:flex;flex-direction:column;gap:.75rem}
+    .li{display:flex;align-items:flex-start;gap:.75rem;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:1rem 1.25rem;transition:border-color .2s}
+    .li:hover{border-color:#93c5fd}
+    .lb{flex:1;display:grid;gap:.6rem}
+    .lb input,.lb textarea{background:white;border:1px solid var(--border);border-radius:8px;padding:.5rem .75rem;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:.875rem;outline:none;width:100%;transition:border .2s}
+    .lb input:focus,.lb textarea:focus{border-color:var(--accent)}
+    .lb textarea{resize:vertical;min-height:80px}
+    .rmbtn{flex-shrink:0;width:32px;height:32px;background:#fef2f2;border:1px solid #fecaca;color:var(--danger);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.8rem;transition:all .2s;margin-top:2px}
+    .rmbtn:hover{background:#fee2e2}
+    .addbtn{display:flex;align-items:center;justify-content:center;gap:.5rem;background:var(--soft);border:1.5px dashed #93c5fd;color:var(--accent);border-radius:12px;padding:.75rem;cursor:pointer;font-size:.85rem;font-weight:600;transition:all .2s;margin-top:.5rem}
+    .addbtn:hover{background:#dbeafe;border-color:var(--accent)}
+
+    /* ── SKILLS ── */
+    .stags{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.5rem;min-height:36px}
+    .stag{display:flex;align-items:center;gap:.35rem;background:var(--soft);border:1px solid #bfdbfe;color:var(--accent);border-radius:7px;padding:.3rem .7rem;font-size:.82rem;font-weight:500}
+    .stag .del{cursor:pointer;color:var(--muted);transition:color .2s;font-size:.7rem}
+    .stag .del:hover{color:var(--danger)}
+    .sarow{display:flex;gap:.5rem;margin-top:.75rem}
+    .sarow input{flex:1;background:var(--bg);border:1.5px solid var(--border);border-radius:9px;padding:.6rem .9rem;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:.875rem;outline:none;transition:border .2s}
+    .sarow input:focus{border-color:var(--accent);background:white}
+    .sarow button{background:var(--accent);color:white;border:none;border-radius:9px;padding:.6rem 1rem;font-weight:700;cursor:pointer;font-size:.85rem;transition:all .2s;box-shadow:0 3px 10px rgba(37,99,235,.25)}
+    .sarow button:hover{background:#1d4ed8}
+
+    /* ── BTNS ── */
+    .bsm{display:inline-flex;align-items:center;gap:.4rem;padding:.5rem 1rem;border-radius:9px;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s;border:none;font-family:'Syne',sans-serif}
+    .bsm-blue{background:var(--accent);color:white;box-shadow:0 3px 10px rgba(37,99,235,.25)}.bsm-blue:hover{background:#1d4ed8}
+    .bsm-green{background:var(--success);color:white}.bsm-green:hover{background:#15803d}
+    .bsm-red{background:var(--danger);color:white}.bsm-red:hover{background:#b91c1c}
+
+    /* ── FIREBASE STATUS ── */
+    .fb-status-bar{background:var(--soft);border:1px solid #bfdbfe;border-radius:12px;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:.75rem}
+    .fb-dot{display:inline-flex;align-items:center;gap:.5rem;font-size:.82rem;font-weight:600}
+    .dot{width:8px;height:8px;border-radius:50%}
+    .dot-green{background:#22c55e;animation:dg 2s infinite}.dot-red{background:#ef4444}.dot-yel{background:#f59e0b;animation:dg 2s infinite}
+    @keyframes dg{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.5)}50%{box-shadow:0 0 0 5px rgba(34,197,94,0)}}
+
+    /* ── TOAST ── */
+    .toast{position:fixed;bottom:2rem;right:2rem;color:white;border-radius:12px;padding:.9rem 1.5rem;font-weight:600;font-size:.9rem;z-index:9999;transform:translateY(100px);opacity:0;transition:all .35s cubic-bezier(.34,1.56,.64,1);display:flex;align-items:center;gap:.5rem;box-shadow:0 8px 28px rgba(0,0,0,.15)}
+    .toast.show{transform:translateY(0);opacity:1}
+    .toast.t-success{background:var(--success)}.toast.t-error{background:var(--danger)}.toast.t-info{background:var(--accent)}
+
+    @media(max-width:1024px){:root{--sidebar-w:230px}.stats{grid-template-columns:1fr 1fr}.fgrid{grid-template-columns:1fr}}
+    @media(max-width:768px){.sidebar{transform:translateX(-100%);transition:transform .3s}.sidebar.open{transform:translateX(0)}.main{margin-left:0}.content{padding:1rem}.stats{grid-template-columns:1fr 1fr;gap:.75rem}}
+  </style>
+</head>
+<body>
+
+<!-- INIT LOADING -->
+<div id="init-screen">
+  <div class="is-logo">Yoki<span>V.</span></div>
+  <div class="is-bar"><div class="is-fill"></div></div>
+  <div class="is-txt" id="init-txt">Menghubungkan ke Firebase...</div>
+</div>
+
+<!-- LOGIN -->
+<div id="loginScreen" style="display:none;align-items:center">
+  <div class="lbox">
+    <div class="l-logo">Yoki<span>V.</span></div>
+    <div class="l-sub">Admin Dashboard — Masuk dengan akun Firebase Anda</div>
+    <label>Email Admin</label>
+    <input type="email" id="l-email" placeholder="admin@email.com" autocomplete="email">
+    <label>Password</label>
+    <input type="password" id="l-pass" placeholder="••••••••">
+    <button class="l-btn" id="l-btn" onclick="doLogin()">
+      <i class="fas fa-sign-in-alt" style="margin-right:.4rem"></i>Masuk ke Dashboard
+    </button>
+    <div class="lerr" id="lerr"></div>
+    <p class="l-hint">Gunakan email & password yang Anda daftarkan di Firebase Authentication</p>
+  </div>
+</div>
+
+<!-- ADMIN APP -->
+<div id="adminApp">
+  <aside class="sidebar" id="sidebar">
+    <div class="s-logo">
+      <div class="s-brand">Yoki<span>V.</span> Admin</div>
+      <div class="s-sub">Portfolio Management</div>
+      <div class="s-user"><i class="fas fa-user-circle"></i><span id="user-email">-</span></div>
+    </div>
+    <nav class="s-nav">
+      <div class="ng">Dashboard</div>
+      <a class="nitem active" data-panel="overview" onclick="sp(this)"><i class="fas fa-tachometer-alt"></i> Overview</a>
+      <div class="ng" style="margin-top:.75rem">Content</div>
+      <a class="nitem" data-panel="profile" onclick="sp(this)"><i class="fas fa-user"></i> Profile &amp; Hero</a>
+      <a class="nitem" data-panel="about" onclick="sp(this)"><i class="fas fa-address-card"></i> About &amp; Skills</a>
+      <a class="nitem" data-panel="services" onclick="sp(this)"><i class="fas fa-concierge-bell"></i> Services</a>
+      <a class="nitem" data-panel="experience" onclick="sp(this)"><i class="fas fa-briefcase"></i> Experience</a>
+      <a class="nitem" data-panel="education" onclick="sp(this)"><i class="fas fa-graduation-cap"></i> Education</a>
+      <a class="nitem" data-panel="organization" onclick="sp(this)"><i class="fas fa-users"></i> Organization</a>
+      <a class="nitem" data-panel="portfolio" onclick="sp(this)"><i class="fas fa-images"></i> Portfolio Items</a>
+      <a class="nitem" data-panel="social" onclick="sp(this)"><i class="fas fa-share-alt"></i> Social Media</a>
+    </nav>
+    <div class="s-footer">
+      <button class="logout" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="tbtitle" id="pt">Overview <span>Dashboard Admin</span></div>
+      <div style="display:flex;gap:.75rem;align-items:center">
+        <div class="fb-dot" id="fb-dot"><span class="dot dot-green"></span><span id="fb-label">Terhubung ke Firebase</span></div>
+        <button class="save-btn" id="save-btn" onclick="saveAll()"><i class="fas fa-save"></i> Simpan ke Firestore</button>
+      </div>
+    </div>
+    <div class="content">
+
+      <!-- OVERVIEW -->
+      <div class="panel active" id="panel-overview">
+        <div class="fb-status-bar">
+          <div><i class="fas fa-fire" style="color:#f97316;margin-right:.4rem"></i><strong>Firebase Firestore</strong> aktif — semua perubahan langsung tersimpan ke cloud.</div>
+          <a href="index.html" target="_blank" class="bsm bsm-blue" style="text-decoration:none"><i class="fas fa-external-link-alt"></i> Lihat Portfolio</a>
+        </div>
+        <div class="stats">
+          <div class="sc"><div class="ic ic-blue"><i class="fas fa-briefcase"></i></div><div class="lbl">Experience</div><div class="val" id="st-exp">-</div></div>
+          <div class="sc"><div class="ic ic-sky"><i class="fas fa-images"></i></div><div class="lbl">Portfolio</div><div class="val" id="st-port">-</div></div>
+          <div class="sc"><div class="ic ic-green"><i class="fas fa-certificate"></i></div><div class="lbl">Sertifikat</div><div class="val" id="st-cert">-</div></div>
+          <div class="sc"><div class="ic ic-yel"><i class="fas fa-code"></i></div><div class="lbl">Skills</div><div class="val" id="st-skill">-</div></div>
+        </div>
+        <div class="fsec">
+          <div class="fsec-title"><i class="fas fa-rocket"></i> Quick Actions</div>
+          <div style="display:flex;gap:.75rem;flex-wrap:wrap">
+            <button class="bsm bsm-blue" onclick="spid('profile')"><i class="fas fa-user"></i> Edit Profile</button>
+            <button class="bsm bsm-blue" onclick="spid('experience')"><i class="fas fa-briefcase"></i> Tambah Experience</button>
+            <button class="bsm bsm-blue" onclick="spid('portfolio')"><i class="fas fa-plus"></i> Tambah Portfolio</button>
+            <button class="bsm bsm-blue" onclick="spid('social')"><i class="fas fa-share-alt"></i> Edit Social Media</button>
+          </div>
+        </div>
+        <div class="fsec">
+          <div class="fsec-title"><i class="fas fa-info-circle"></i> Cara Kerja Dashboard</div>
+          <p style="color:var(--muted);font-size:.875rem;line-height:1.85">
+            1. Pilih menu di sidebar kiri untuk bagian yang ingin diedit.<br>
+            2. Edit konten sesuai kebutuhan.<br>
+            3. Klik <strong style="color:var(--success)">Simpan ke Firestore</strong> — data langsung tersimpan di cloud Firebase.<br>
+            4. Buka portfolio Anda — data akan dimuat otomatis dari Firestore. Tidak perlu upload ulang file HTML!
+          </p>
+        </div>
+      </div>
+
+      <!-- PROFILE -->
+      <div class="panel" id="panel-profile">
+        <div class="fsec">
+          <div class="fsec-title"><i class="fas fa-user"></i> Profile &amp; Hero Section</div>
+          <div class="fgrid">
+            <div class="fg"><label>Nama Lengkap</label><input id="p-name" value="Yoki Valianda"></div>
+            <div class="fg"><label>Roles (pisahkan dengan koma)</label><input id="p-roles" value="IT System Administrator, IT Support, Freelancer"></div>
+            <div class="fg"><label>Status</label>
+              <select id="p-status"><option value="Available for work" selected>Available for work</option><option value="Currently Busy">Currently Busy</option><option value="Open to Opportunities">Open to Opportunities</option></select>
+            </div>
+            <div class="fg"><label>Nomor WhatsApp (tanpa +)</label><input id="p-wa" value="6285156355799"></div>
+            <div class="fg"><label>Link Download CV</label><input id="p-cv" value="resume/CV_Yoki_Valianda.pdf"></div>
+            <div class="fg"><label>Email</label><input id="p-email" value="yokivalianda14@gmail.com"></div>
+            <div class="fg full"><label>Deskripsi Hero</label><textarea id="p-desc">Sarjana Komputer dengan pengalaman di IT Support & System Administration. Berpengalaman dalam troubleshooting, networking, dan manajemen sistem. Berdomisili di Palembang, Indonesia.</textarea></div>
+          </div>
+          <div class="fgrid c3" style="margin-top:1.25rem">
+            <div class="fg"><label>Stat 1 — Angka</label><input id="p-s1n" value="3+"></div>
+            <div class="fg"><label>Stat 1 — Label</label><input id="p-s1l" value="Tahun Pengalaman"></div>
+            <div class="fg"><label>Stat 2 — Angka</label><input id="p-s2n" value="3.71"></div>
+            <div class="fg"><label>Stat 2 — Label</label><input id="p-s2l" value="IPK S1"></div>
+            <div class="fg"><label>Stat 3 — Angka</label><input id="p-s3n" value="20+"></div>
+            <div class="fg"><label>Stat 3 — Label</label><input id="p-s3l" value="Sertifikat"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ABOUT -->
+      <div class="panel" id="panel-about">
+        <div class="fsec">
+          <div class="fsec-title"><i class="fas fa-address-card"></i> About Me</div>
+          <div class="fgrid c1">
+            <div class="fg"><label>Paragraf 1</label><textarea id="ab-p1">Saya adalah lulusan Sarjana Komputer dengan minat kuat dalam bidang IT Support dan System Administration.</textarea></div>
+            <div class="fg"><label>Paragraf 2</label><textarea id="ab-p2">Selain latar belakang IT, saya memiliki keahlian mengetik 10 jari tersertifikasi dengan kecepatan 50–100 WPM.</textarea></div>
+          </div>
+        </div>
+        <div class="fsec">
+          <div class="fsec-title"><i class="fas fa-code"></i> Skills</div>
+          <div class="stags" id="skillTags"></div>
+          <div class="sarow"><input id="si" placeholder="Contoh: Python, Linux, Networking..."><button onclick="addSkill()"><i class="fas fa-plus"></i> Tambah</button></div>
+        </div>
+      </div>
+
+      <!-- SERVICES -->
+      <div class="panel" id="panel-services">
+        <div class="fsec"><div class="fsec-title"><i class="fas fa-concierge-bell"></i> Services</div><div class="lc" id="servicesList"></div><div class="addbtn" onclick="addSvc()"><i class="fas fa-plus"></i> Tambah Service</div></div>
+      </div>
+
+      <!-- EXPERIENCE -->
+      <div class="panel" id="panel-experience">
+        <div class="fsec"><div class="fsec-title"><i class="fas fa-briefcase"></i> Work Experience</div><div class="lc" id="expList"></div><div class="addbtn" onclick="addExp()"><i class="fas fa-plus"></i> Tambah Experience</div></div>
+      </div>
+
+      <!-- EDUCATION -->
+      <div class="panel" id="panel-education">
+        <div class="fsec"><div class="fsec-title"><i class="fas fa-graduation-cap"></i> Education</div><div class="lc" id="eduList"></div><div class="addbtn" onclick="addEdu()"><i class="fas fa-plus"></i> Tambah Pendidikan</div></div>
+      </div>
+
+      <!-- ORGANIZATION -->
+      <div class="panel" id="panel-organization">
+        <div class="fsec"><div class="fsec-title"><i class="fas fa-users"></i> Organization Experience</div><div class="lc" id="orgList"></div><div class="addbtn" onclick="addOrg()"><i class="fas fa-plus"></i> Tambah Organisasi</div></div>
+      </div>
+
+      <!-- PORTFOLIO -->
+      <div class="panel" id="panel-portfolio">
+        <div class="fsec">
+          <div class="fsec-title"><i class="fas fa-images"></i> Portfolio Items</div>
+          <p style="color:var(--muted);font-size:.82rem;margin-bottom:1rem">Untuk kolom <strong>Kategori Filter</strong>, isi salah satu: <code>certificate</code>, <code>web-dev</code>, atau <code>result-test</code></p>
+          <div class="lc" id="portList"></div>
+          <div class="addbtn" onclick="addPort()"><i class="fas fa-plus"></i> Tambah Item Portfolio</div>
+        </div>
+      </div>
+
+      <!-- SOCIAL -->
+      <div class="panel" id="panel-social">
+        <div class="fsec">
+          <div class="fsec-title"><i class="fas fa-share-alt"></i> Social Media &amp; Contact</div>
+          <div class="fgrid">
+            <div class="fg"><label><i class="fab fa-facebook-f" style="color:#1877f2"></i> Facebook URL</label><input id="sm-fb" value="https://web.facebook.com/yokivalianda/"></div>
+            <div class="fg"><label><i class="fab fa-instagram" style="color:#e1306c"></i> Instagram URL</label><input id="sm-ig" value="https://www.instagram.com/yoki_vld77/"></div>
+            <div class="fg"><label><i class="fab fa-linkedin-in" style="color:#0a66c2"></i> LinkedIn URL</label><input id="sm-li" value="https://www.linkedin.com/in/yoki-valianda/"></div>
+            <div class="fg"><label><i class="fab fa-whatsapp" style="color:#22c55e"></i> WhatsApp (tanpa +)</label><input id="sm-wa" value="6285156355799"></div>
+            <div class="fg"><label>Email</label><input id="sm-email" value="yokivalianda14@gmail.com"></div>
+            <div class="fg"><label>Alamat</label><input id="sm-addr" value="Ilir Barat 1, Kota Palembang, Indonesia"></div>
+            <div class="fg full"><label>Teks Copyright Footer</label><input id="sm-copy" value="© 2024 Yoki Valianda. All rights reserved."></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /adminApp -->
+
+<div class="toast" id="toast"><i class="fas fa-check"></i><span id="toastMsg">Tersimpan!</span></div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+
+<script>
+// ─── DEFAULT DATA ─────────────────────────────────────────────
+const DEF = {
+  services:[{title:'Instalasi Sistem Operasi',icon:'fas fa-laptop',desc:'Instalasi OS komputer lengkap termasuk persiapan media, pengaturan partisi, dan konfigurasi awal.'},{title:'Maintenance PC',icon:'fas fa-tools',desc:'Analisis dan penyelesaian masalah hardware/software komputer.'},{title:'Jaringan Komputer',icon:'fas fa-network-wired',desc:'Konfigurasi dan troubleshooting jaringan LAN/WAN.'},{title:'IT Support Teknis',icon:'fas fa-headset',desc:'Dukungan teknis komprehensif untuk pengguna akhir.'}],
+  experience:[{date:'Maret 2024 – Sekarang',title:'IT System Administrator',company:'PT. Marisa Inti Teknologi, Palembang',desc:'Mengelola sistem website servis laptop, memberikan dukungan teknis kepada teknisi.'},{date:'Juni 2023 – Agustus 2023',title:'IT Support Trainee',company:'Digital Talent Scholarship, Indonesia',desc:'Pelatihan: Dukungan Teknis, Jaringan Komputer, Sistem Operasi.'},{date:'Maret 2021 – April 2021',title:'Admin Marketing (Internship)',company:'PT. DUA PUTRA ASURO, Palembang',desc:'Pemasaran produk dan pengembangan proyek website penjualan.'},{date:'Agustus 2016 – November 2016',title:'Admin (Internship)',company:'PT. SUGIH RAHAYU BAHAGIA, Palembang',desc:'Pengarsipan dan pengelolaan dokumen kantor.'}],
+  education:[{date:'Oktober 2018 – Agustus 2022',title:'Sarjana Komputer — S1 Informatika',institution:'Institut Teknologi dan Bisnis PalComTech, Palembang',desc:'IPK 3.71 dengan predikat pujian.'},{date:'SMK',title:'Teknik Komputer dan Jaringan',institution:'SMK Utama Bakti Palembang',desc:'Hardware, software, dan dasar-dasar jaringan LAN/WAN.'}],
+  organization:[{date:'Oktober 2019 – September 2020',title:'Ketua UKM Programming',org:'PalComTech Programming Club, Palembang',desc:'Mengkoordinasikan kegiatan belajar dan membuat laporan bulanan.'},{date:'September 2020',title:'Sukarelawan PKKMB',org:'Institut Teknologi dan Bisnis PalComTech',desc:'Memimpin kelompok mahasiswa baru dalam kegiatan PKKMB.'}],
+  portfolio:[{title:'Landing Page Wedding Decoration',cat:'web-dev',catLabel:'Web Development',img:'img/Halaman Utama V2.png'},{title:'Dashboard Admin Wedding',cat:'web-dev',catLabel:'Web Development',img:'img/SS Menu Dashboard V2.png'},{title:'Dashboard SPK',cat:'web-dev',catLabel:'Web Development',img:'img/dashboard admin.jpeg'},{title:'IT Support Google',cat:'certificate',catLabel:'Certificate',img:'img/sertifikat/IT Support Google_Yoki Valianda_1.png'},{title:'Advanced Typing Test',cat:'certificate',catLabel:'Certificate',img:'img/sertifikat/advanced.png'},{title:'Typing Test – MonkeyType',cat:'result-test',catLabel:'Result Typing',img:'img/monkeytype.png'}],
+  skills:['Operating Systems','IT Support Specialist','Computer Networking','10-Finger Typing','Microsoft Office Suite','Hardware Maintenance']
+};
+
+// ─── FIREBASE ─────────────────────────────────────────────────
+let db, auth;
+function initTxt(t){document.getElementById('init-txt').textContent=t;}
+
+try {
+  firebase.initializeApp(FIREBASE_CONFIG);
+  db   = firebase.firestore();
+  auth = firebase.auth();
+  initTxt('Memeriksa sesi login...');
+} catch(e) {
+  initTxt('❌ Gagal: Periksa konfigurasi di js/firebase-config.js');
+  console.error(e);
+}
+
+// ─── AUTH STATE ───────────────────────────────────────────────
+auth && auth.onAuthStateChanged(user => {
+  document.getElementById('init-screen').style.display = 'none';
+  if (user) {
+    document.getElementById('user-email').textContent = user.email;
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminApp').style.display = 'flex';
+    loadAllData();
+  } else {
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('adminApp').style.display = 'none';
+  }
+});
+
+async function doLogin() {
+  const email = document.getElementById('l-email').value.trim();
+  const pass  = document.getElementById('l-pass').value;
+  const btn   = document.getElementById('l-btn');
+  const err   = document.getElementById('lerr');
+  if (!email || !pass) { showErr('Email dan password wajib diisi.'); return; }
+  btn.disabled = true; btn.textContent = 'Masuk...';
+  err.style.display = 'none';
+  try {
+    await auth.signInWithEmailAndPassword(email, pass);
+  } catch(e) {
+    const msgs = { 'auth/wrong-password':'Password salah.','auth/user-not-found':'Email tidak ditemukan.','auth/invalid-email':'Format email tidak valid.','auth/too-many-requests':'Terlalu banyak percobaan. Coba lagi nanti.' };
+    showErr(msgs[e.code] || 'Login gagal: ' + e.message);
+    btn.disabled = false; btn.innerHTML = '<i class="fas fa-sign-in-alt" style="margin-right:.4rem"></i>Masuk ke Dashboard';
+  }
+}
+function showErr(msg){const e=document.getElementById('lerr');e.textContent=msg;e.style.display='block';}
+async function doLogout(){try{await auth.signOut();}catch(e){console.error(e);}}
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('loginScreen').style.display!=='none')doLogin();});
+
+// ─── LOAD ALL ─────────────────────────────────────────────────
+async function loadAllData() {
+  try {
+    const DOCS = ['profile','about','services','experience','education','organization','portfolio','social'];
+    const snaps = await Promise.all(DOCS.map(n => db.collection('portfolio').doc(n).get()));
+    snaps.forEach(snap => {
+      if (!snap.exists) return;
+      const n = snap.id, d = snap.data();
+      if (['services','experience','education','organization','portfolio'].includes(n)) {
+        if (d.items) applyList(n, d.items);
+      } else if (n === 'profile') {
+        Object.keys(d).forEach(k => { const el=document.getElementById('p-'+k); if(el) el.value=d[k]; });
+      } else if (n === 'about') {
+        ['p1','p2'].forEach(k => { const el=document.getElementById('ab-'+k); if(el&&d[k]) el.value=d[k]; });
+        if (d.skills) { skills=d.skills; renderSkills(); }
+      } else if (n === 'social') {
+        ['fb','ig','li','wa','email','addr','copy'].forEach(k=>{const el=document.getElementById('sm-'+k);if(el&&d[k])el.value=d[k];});
+      }
+    });
+    updateStats();
+    showToast('Data berhasil dimuat dari Firestore','t-info');
+  } catch(e) {
+    console.warn('Gagal load data:', e);
+    showToast('Gagal memuat data Firestore','t-error');
+  }
+}
+
+function applyList(name, items) {
+  const fnMap = { services: apSvc, experience: apExp, education: apEdu, organization: apOrg, portfolio: apPort };
+  const listId = { services:'servicesList', experience:'expList', education:'eduList', organization:'orgList', portfolio:'portList' };
+  document.getElementById(listId[name]).innerHTML = '';
+  items.forEach(item => fnMap[name](item));
+}
+
+// ─── NAVIGATION ───────────────────────────────────────────────
+const PL = {overview:'Overview',profile:'Profile & Hero',about:'About & Skills',services:'Services',experience:'Experience',education:'Education',organization:'Organization',portfolio:'Portfolio Items',social:'Social Media'};
+function sp(el) {
+  document.querySelectorAll('.nitem').forEach(i=>i.classList.remove('active'));
+  el.classList.add('active');
+  const id = el.dataset.panel;
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  document.getElementById('pt').innerHTML = (PL[id]||id)+' <span>Portfolio Manager</span>';
+}
+function spid(id){const el=document.querySelector('[data-panel="'+id+'"]');if(el)sp(el);}
+
+// ─── SKILLS ───────────────────────────────────────────────────
+let skills = [...DEF.skills];
+function renderSkills() {
+  const c=document.getElementById('skillTags'); c.innerHTML='';
+  skills.forEach((s,i)=>{const t=document.createElement('div');t.className='stag';t.innerHTML=s+'<span class="del" onclick="rmSkill('+i+')">✕</span>';c.appendChild(t);});
+  document.getElementById('st-skill').textContent=skills.length;
+}
+renderSkills();
+function addSkill(){const v=document.getElementById('si').value.trim();if(!v)return;skills.push(v);document.getElementById('si').value='';renderSkills();}
+function rmSkill(i){skills.splice(i,1);renderSkills();}
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.activeElement.id==='si')addSkill();});
+
+// ─── LIST HELPERS ─────────────────────────────────────────────
+function mkItem(fields, onRm) {
+  const wrap=document.createElement('div');wrap.className='li';
+  const body=document.createElement('div');body.className='lb';
+  fields.forEach(f=>{
+    const el=f.type==='textarea'?document.createElement('textarea'):document.createElement('input');
+    if(f.type==='textarea') el.rows=3; else el.type='text';
+    el.placeholder=f.ph||'';el.value=f.val||'';el.dataset.key=f.key;
+    body.appendChild(el);
+  });
+  const rm=document.createElement('button');rm.className='rmbtn';rm.innerHTML='<i class="fas fa-trash"></i>';rm.onclick=onRm;
+  wrap.appendChild(body);wrap.appendChild(rm);return wrap;
+}
+function getList(listId,keys){return[...document.getElementById(listId).querySelectorAll('.li')].map(li=>Object.fromEntries(keys.map(k=>[k,li.querySelector('[data-key="'+k+'"]').value])));}
+
+// Services
+function apSvc(s={}){const c=document.getElementById('servicesList');const it=mkItem([{key:'title',ph:'Nama Service',val:s.title},{key:'icon',ph:'Icon class (fas fa-laptop)',val:s.icon},{key:'desc',type:'textarea',ph:'Deskripsi...',val:s.desc}],()=>it.remove());c.appendChild(it);}
+function addSvc(){apSvc();}
+// Auto-init
+DEF.services.forEach(apSvc);
+
+// Experience
+function apExp(e={}){const c=document.getElementById('expList');const it=mkItem([{key:'date',ph:'Periode',val:e.date},{key:'title',ph:'Jabatan',val:e.title},{key:'company',ph:'Perusahaan',val:e.company},{key:'desc',type:'textarea',ph:'Deskripsi...',val:e.desc}],()=>it.remove());c.appendChild(it);}
+function addExp(){apExp();}
+DEF.experience.forEach(apExp);
+
+// Education
+function apEdu(e={}){const c=document.getElementById('eduList');const it=mkItem([{key:'date',ph:'Tahun',val:e.date},{key:'title',ph:'Gelar / Jurusan',val:e.title},{key:'institution',ph:'Institusi',val:e.institution},{key:'desc',type:'textarea',ph:'Keterangan...',val:e.desc}],()=>it.remove());c.appendChild(it);}
+function addEdu(){apEdu();}
+DEF.education.forEach(apEdu);
+
+// Organization
+function apOrg(o={}){const c=document.getElementById('orgList');const it=mkItem([{key:'date',ph:'Periode',val:o.date},{key:'title',ph:'Jabatan',val:o.title},{key:'org',ph:'Nama Organisasi',val:o.org},{key:'desc',type:'textarea',ph:'Deskripsi...',val:o.desc}],()=>it.remove());c.appendChild(it);}
+function addOrg(){apOrg();}
+DEF.organization.forEach(apOrg);
+
+// Portfolio
+function apPort(p={}){const c=document.getElementById('portList');const it=mkItem([{key:'title',ph:'Judul item',val:p.title},{key:'img',ph:'Path gambar (img/foto.png)',val:p.img},{key:'cat',ph:'certificate / web-dev / result-test',val:p.cat},{key:'catLabel',ph:'Label tampil (Certificate, Web Development...)',val:p.catLabel},{key:'date',ph:'Tanggal (opsional)',val:p.date||''}],()=>it.remove());c.appendChild(it);}
+function addPort(){apPort();}
+DEF.portfolio.forEach(apPort);
+
+// ─── UPDATE STATS ─────────────────────────────────────────────
+function updateStats(){
+  document.getElementById('st-exp').textContent  = document.getElementById('expList').querySelectorAll('.li').length;
+  const ports = document.getElementById('portList').querySelectorAll('.li');
+  document.getElementById('st-port').textContent = ports.length;
+  document.getElementById('st-cert').textContent = [...ports].filter(li=>li.querySelector('[data-key="cat"]')?.value==='certificate').length;
+  document.getElementById('st-skill').textContent = skills.length;
+}
+
+// ─── SAVE ALL TO FIRESTORE ────────────────────────────────────
+async function saveAll() {
+  const btn = document.getElementById('save-btn');
+  btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+
+  const profile = {
+    name: v('p-name'), roles: v('p-roles'), status: v('p-status'),
+    wa: v('p-wa'), cv: v('p-cv'), email: v('p-email'), desc: v('p-desc'),
+    s1n: v('p-s1n'), s1l: v('p-s1l'), s2n: v('p-s2n'), s2l: v('p-s2l'),
+    s3n: v('p-s3n'), s3l: v('p-s3l')
+  };
+  const about   = { p1: v('ab-p1'), p2: v('ab-p2'), skills };
+  const social  = { fb:v('sm-fb'), ig:v('sm-ig'), li:v('sm-li'), wa:v('sm-wa'), email:v('sm-email'), addr:v('sm-addr'), copy:v('sm-copy') };
+  const services    = { items: getList('servicesList',['title','icon','desc']) };
+  const experience  = { items: getList('expList',['date','title','company','desc']) };
+  const education   = { items: getList('eduList',['date','title','institution','desc']) };
+  const organization= { items: getList('orgList',['date','title','org','desc']) };
+  const portfolio   = { items: getList('portList',['title','img','cat','catLabel','date']) };
+
+  try {
+    const col = db.collection('portfolio');
+    await Promise.all([
+      col.doc('profile').set(profile),
+      col.doc('about').set(about),
+      col.doc('social').set(social),
+      col.doc('services').set(services),
+      col.doc('experience').set(experience),
+      col.doc('education').set(education),
+      col.doc('organization').set(organization),
+      col.doc('portfolio').set(portfolio),
+    ]);
+    updateStats();
+    showToast('Berhasil disimpan ke Firebase Firestore! 🎉','t-success');
+  } catch(e) {
+    console.error('Save error:', e);
+    showToast('Gagal menyimpan: ' + e.message, 't-error');
+  } finally {
+    btn.disabled = false; btn.innerHTML = '<i class="fas fa-save"></i> Simpan ke Firestore';
+  }
+}
+
+function v(id){ const el=document.getElementById(id); return el?el.value:''; }
+
+// ─── TOAST ────────────────────────────────────────────────────
+function showToast(msg,cls='t-success') {
+  const t=document.getElementById('toast'),m=document.getElementById('toastMsg');
+  t.className='toast '+cls; m.textContent=msg;
+  t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3500);
+}
+</script>
+</body>
+</html>

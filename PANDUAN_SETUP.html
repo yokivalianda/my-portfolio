@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <title>Panduan Setup Firebase — Portfolio Yoki Valianda</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root{--accent:#2563eb;--accent2:#0ea5e9;--text:#1e293b;--muted:#64748b;--border:#dde4f0;--soft:#eff4ff;--success:#16a34a;--warning:#d97706;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{background:#f0f4ff;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;line-height:1.7;padding:2rem 1rem}
+    h1,h2,h3{font-family:'Syne',sans-serif}
+    .wrap{max-width:860px;margin:0 auto}
+    .header{text-align:center;padding:3rem 0 2.5rem}
+    .header h1{font-size:2.2rem;font-weight:800;color:var(--text);margin-bottom:.5rem}
+    .header h1 span{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .header p{color:var(--muted);font-size:1rem}
+
+    /* STEP */
+    .step{background:white;border:1px solid var(--border);border-radius:20px;padding:2rem;margin-bottom:1.5rem;box-shadow:0 2px 12px rgba(37,99,235,.05);position:relative;overflow:hidden}
+    .step::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+    .step-num{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;border-radius:10px;font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;margin-bottom:1rem;flex-shrink:0}
+    .step-title{font-size:1.15rem;font-weight:700;color:var(--text);margin-bottom:.75rem;display:flex;align-items:center;gap:.75rem}
+    .step p{color:var(--muted);font-size:.9rem;line-height:1.85;margin-bottom:.75rem}
+    .step p:last-child{margin-bottom:0}
+
+    /* CODE */
+    .code-box{background:#1e293b;border-radius:12px;padding:1.25rem 1.5rem;margin:1rem 0;overflow-x:auto;position:relative}
+    .code-box code{color:#e2e8f0;font-family:'Courier New',monospace;font-size:.875rem;line-height:1.7;white-space:pre}
+    .code-key{color:#7dd3fc}.code-val{color:#86efac}.code-comment{color:#64748b}
+    .copy-btn{position:absolute;top:.75rem;right:.75rem;background:rgba(255,255,255,.1);border:none;color:#94a3b8;border-radius:7px;padding:.35rem .7rem;cursor:pointer;font-size:.75rem;transition:all .2s}
+    .copy-btn:hover{background:rgba(255,255,255,.2);color:white}
+
+    /* IMAGE PLACEHOLDER */
+    .img-box{background:var(--soft);border:1.5px dashed #93c5fd;border-radius:14px;padding:1.5rem;text-align:center;margin:1rem 0;color:var(--muted);font-size:.85rem}
+    .img-box i{font-size:2rem;color:var(--accent);display:block;margin-bottom:.5rem}
+
+    /* INFO BOXES */
+    .info{border-radius:12px;padding:1rem 1.25rem;margin:1rem 0;display:flex;gap:.75rem;align-items:flex-start;font-size:.875rem}
+    .info.tip{background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8}
+    .info.warn{background:#fffbeb;border:1px solid #fde68a;color:#92400e}
+    .info.ok{background:#f0fdf4;border:1px solid #bbf7d0;color:#14532d}
+    .info i{flex-shrink:0;margin-top:2px}
+
+    /* STEPS CHECKLIST */
+    .checklist{background:var(--soft);border:1px solid #bfdbfe;border-radius:14px;padding:1.5rem;margin-bottom:2rem}
+    .checklist h3{font-size:1rem;color:var(--accent);margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
+    .cl-item{display:flex;align-items:center;gap:.75rem;padding:.5rem 0;border-bottom:1px solid #dbeafe;font-size:.875rem;color:var(--text)}
+    .cl-item:last-child{border-bottom:none}
+    .cl-item i{width:20px;text-align:center;font-size:.85rem}
+    .done{color:var(--success)}.todo{color:#93c5fd}
+
+    /* FILE STRUCTURE */
+    .file-tree{background:#1e293b;border-radius:12px;padding:1.25rem 1.5rem;margin:1rem 0;font-family:'Courier New',monospace;font-size:.875rem;line-height:1.9;color:#e2e8f0}
+    .ft-folder{color:#fbbf24}.ft-file{color:#86efac}.ft-edit{color:#f97316}.ft-muted{color:#64748b}
+
+    /* FOOTER */
+    .footer{text-align:center;padding:2rem 0;color:var(--muted);font-size:.82rem}
+    .footer a{color:var(--accent);text-decoration:none}
+
+    /* NAVIGATION */
+    .nav-sticky{position:sticky;top:1rem;z-index:10;margin-bottom:2rem}
+    .nav-inner{background:white;border:1px solid var(--border);border-radius:14px;padding:.75rem 1.5rem;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 12px rgba(37,99,235,.07)}
+    .nav-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;color:var(--text)}
+    .nav-logo span{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .nav-links-sm{display:flex;gap:.5rem;flex-wrap:wrap}
+    .nav-links-sm a{font-size:.78rem;color:var(--muted);text-decoration:none;padding:.3rem .7rem;border-radius:6px;transition:all .2s}
+    .nav-links-sm a:hover{color:var(--accent);background:var(--soft)}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <!-- NAV -->
+  <div class="nav-sticky">
+    <div class="nav-inner">
+      <div class="nav-logo">Yoki<span>V.</span> — Setup Guide</div>
+      <div class="nav-links-sm">
+        <a href="#step1">1. Buat Project</a>
+        <a href="#step2">2. Firestore</a>
+        <a href="#step3">3. Auth</a>
+        <a href="#step4">4. Config</a>
+        <a href="#step5">5. Rules</a>
+        <a href="#step6">6. Selesai!</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- HEADER -->
+  <div class="header">
+    <h1>Panduan Setup <span>Firebase</span></h1>
+    <p>Ikuti langkah berikut — tidak perlu coding! Hanya butuh ±15 menit ☕</p>
+  </div>
+
+  <!-- CHECKLIST -->
+  <div class="checklist">
+    <h3><i class="fas fa-clipboard-list"></i> Yang Anda Butuhkan</h3>
+    <div class="cl-item"><i class="fas fa-check-circle done"></i> Akun Google (Gmail)</div>
+    <div class="cl-item"><i class="fas fa-check-circle done"></i> Browser (Chrome/Firefox/Edge)</div>
+    <div class="cl-item"><i class="fas fa-check-circle done"></i> File portfolio yang sudah diunduh</div>
+    <div class="cl-item"><i class="fas fa-info-circle todo"></i> Akses ke folder file portfolio Anda</div>
+    <div class="cl-item"><i class="fas fa-info-circle todo"></i> ~15 menit waktu</div>
+  </div>
+
+  <!-- STRUKTUR FILE -->
+  <div class="step">
+    <div class="step-title"><i class="fas fa-folder-tree" style="color:var(--accent)"></i> Struktur File Portfolio Anda</div>
+    <p>Pastikan file-file ini ada di folder portfolio Anda:</p>
+    <div class="file-tree">
+<span class="ft-folder">📁 my-portfolio/</span>
+├── <span class="ft-edit">index.html</span>        <span class="ft-muted">← halaman utama (sudah diperbarui)</span>
+├── <span class="ft-edit">admin.html</span>        <span class="ft-muted">← dashboard admin (sudah diperbarui)</span>
+├── <span class="ft-folder">📁 js/</span>
+│   └── <span class="ft-edit">firebase-config.js</span>  <span class="ft-muted">← ⭐ ANDA AKAN EDIT FILE INI</span>
+├── <span class="ft-folder">📁 img/</span>           <span class="ft-muted">← gambar & foto</span>
+├── <span class="ft-folder">📁 lib/</span>           <span class="ft-muted">← library lightbox dll</span>
+└── <span class="ft-file">PANDUAN_SETUP.html</span>  <span class="ft-muted">← file panduan ini</span>
+    </div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="step" id="step1">
+    <div class="step-title"><div class="step-num">1</div> Buat Project Firebase</div>
+    <p><strong>Buka browser, kunjungi:</strong> <a href="https://console.firebase.google.com" target="_blank" style="color:var(--accent);font-weight:600">console.firebase.google.com</a></p>
+    <p>Masuk dengan akun Google Anda, lalu:</p>
+    <div class="info tip"><i class="fas fa-mouse-pointer"></i>&nbsp; Klik tombol <strong>"Add project"</strong> atau <strong>"Tambahkan project"</strong></div>
+    <p>Isi form pembuatan project:</p>
+    <div class="info ok" style="flex-direction:column;gap:.4rem">
+      <div><i class="fas fa-1"></i>&nbsp; <strong>Nama project:</strong> isi bebas, contoh: <code>portfolio-yoki</code></div>
+      <div><i class="fas fa-2"></i>&nbsp; <strong>Google Analytics:</strong> boleh dinonaktifkan (klik toggle, lalu klik Continue)</div>
+      <div><i class="fas fa-3"></i>&nbsp; Klik <strong>"Create project"</strong> — tunggu sebentar sampai siap</div>
+      <div><i class="fas fa-4"></i>&nbsp; Klik <strong>"Continue"</strong> — Anda masuk ke dashboard Firebase</div>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step" id="step2">
+    <div class="step-title"><div class="step-num">2</div> Aktifkan Firestore Database</div>
+    <p>Di sidebar kiri Firebase Console, cari dan klik <strong>"Firestore Database"</strong></p>
+    <div class="info tip"><i class="fas fa-search"></i>&nbsp; Jika tidak terlihat, klik ikon hamburger <strong>☰</strong> kiri atas → <strong>Build</strong> → <strong>Firestore Database</strong></div>
+    <p>Lalu:</p>
+    <div class="info ok" style="flex-direction:column;gap:.4rem">
+      <div><i class="fas fa-1"></i>&nbsp; Klik <strong>"Create database"</strong></div>
+      <div><i class="fas fa-2"></i>&nbsp; Pilih <strong>"Start in production mode"</strong> → klik Next</div>
+      <div><i class="fas fa-3"></i>&nbsp; Pilih lokasi server: pilih <strong>"asia-southeast2"</strong> (Jakarta) untuk performa terbaik di Indonesia</div>
+      <div><i class="fas fa-4"></i>&nbsp; Klik <strong>"Done"</strong> — tunggu Firestore siap (biasanya 30 detik)</div>
+    </div>
+    <div class="info warn"><i class="fas fa-exclamation-triangle"></i>&nbsp; Jangan khawatir dengan "production mode" — kita akan atur security rules di Langkah 5.</div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step" id="step3">
+    <div class="step-title"><div class="step-num">3</div> Aktifkan Authentication & Buat Akun Admin</div>
+    <p>Di sidebar kiri, klik <strong>"Authentication"</strong> (atau Build → Authentication)</p>
+    <div class="info ok" style="flex-direction:column;gap:.4rem">
+      <div><i class="fas fa-1"></i>&nbsp; Klik tab <strong>"Sign-in method"</strong></div>
+      <div><i class="fas fa-2"></i>&nbsp; Klik <strong>"Email/Password"</strong></div>
+      <div><i class="fas fa-3"></i>&nbsp; Toggle <strong>"Enable"</strong> → klik Save</div>
+    </div>
+    <p style="margin-top:1rem"><strong>Sekarang buat akun admin Anda:</strong></p>
+    <div class="info ok" style="flex-direction:column;gap:.4rem">
+      <div><i class="fas fa-1"></i>&nbsp; Klik tab <strong>"Users"</strong></div>
+      <div><i class="fas fa-2"></i>&nbsp; Klik <strong>"Add user"</strong></div>
+      <div><i class="fas fa-3"></i>&nbsp; Isi <strong>Email</strong> (bisa email Gmail Anda) dan <strong>Password</strong> pilihan Anda</div>
+      <div><i class="fas fa-4"></i>&nbsp; Klik <strong>"Add user"</strong></div>
+    </div>
+    <div class="info tip"><i class="fas fa-lightbulb"></i>&nbsp; Catat email dan password ini — Anda akan memakainya untuk login ke halaman admin!</div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="step" id="step4">
+    <div class="step-title"><div class="step-num">4</div> Ambil Konfigurasi Firebase & Isi ke File</div>
+    <p>Di sidebar kiri, klik ikon <strong>⚙️ Project Settings</strong> (roda gigi di pojok kiri bawah), lalu scroll ke bawah ke bagian <strong>"Your apps"</strong>.</p>
+    <div class="info ok" style="flex-direction:column;gap:.4rem">
+      <div><i class="fas fa-1"></i>&nbsp; Klik ikon <strong>&lt;/&gt;</strong> (Web app)</div>
+      <div><i class="fas fa-2"></i>&nbsp; Isi nama app: contoh <code>portfolio-web</code></div>
+      <div><i class="fas fa-3"></i>&nbsp; Klik <strong>"Register app"</strong></div>
+      <div><i class="fas fa-4"></i>&nbsp; Anda akan melihat blok kode seperti ini:</div>
+    </div>
+
+    <div class="code-box">
+      <code><span class="code-comment">// Firebase SDK configuration</span>
+<span class="code-key">const</span> firebaseConfig = {
+  <span class="code-key">apiKey:</span>            <span class="code-val">"AIzaSyXXXXXXXXXXXXXX"</span>,
+  <span class="code-key">authDomain:</span>        <span class="code-val">"portfolio-yoki.firebaseapp.com"</span>,
+  <span class="code-key">projectId:</span>         <span class="code-val">"portfolio-yoki"</span>,
+  <span class="code-key">storageBucket:</span>     <span class="code-val">"portfolio-yoki.appspot.com"</span>,
+  <span class="code-key">messagingSenderId:</span> <span class="code-val">"123456789012"</span>,
+  <span class="code-key">appId:</span>             <span class="code-val">"1:123456789012:web:abcdef123456"</span>
+};</code>
+    </div>
+
+    <p>Sekarang buka file <strong><code>js/firebase-config.js</code></strong> dengan Notepad / VS Code, dan isi nilainya:</p>
+
+    <div class="code-box">
+      <code><span class="code-comment">// js/firebase-config.js</span>
+<span class="code-key">const</span> FIREBASE_CONFIG = {
+  <span class="code-key">apiKey:</span>            <span class="code-val">"GANTI_dengan_apiKey_dari_Firebase"</span>,
+  <span class="code-key">authDomain:</span>        <span class="code-val">"GANTI_dengan_authDomain"</span>,
+  <span class="code-key">projectId:</span>         <span class="code-val">"GANTI_dengan_projectId"</span>,
+  <span class="code-key">storageBucket:</span>     <span class="code-val">"GANTI_dengan_storageBucket"</span>,
+  <span class="code-key">messagingSenderId:</span> <span class="code-val">"GANTI_dengan_messagingSenderId"</span>,
+  <span class="code-key">appId:</span>             <span class="code-val">"GANTI_dengan_appId"</span>
+};
+
+<span class="code-comment">// Email yang Anda daftarkan di Step 3</span>
+<span class="code-key">const</span> ADMIN_EMAIL = <span class="code-val">"email-admin-anda@gmail.com"</span>;</code>
+    </div>
+
+    <div class="info warn"><i class="fas fa-exclamation-triangle"></i>&nbsp; <strong>Salin nilai persis sesuai aslinya</strong> termasuk tanda kutip dan koma. Jangan ada typo!</div>
+  </div>
+
+  <!-- STEP 5 -->
+  <div class="step" id="step5">
+    <div class="step-title"><div class="step-num">5</div> Atur Security Rules Firestore</div>
+    <p>Di Firebase Console, buka <strong>Firestore Database</strong> → klik tab <strong>"Rules"</strong></p>
+    <p>Hapus semua teks yang ada, lalu <strong>copy-paste rules di bawah ini</strong>:</p>
+
+    <div class="code-box">
+      <button class="copy-btn" onclick="copyRules()"><i class="fas fa-copy"></i> Copy</button>
+      <code id="rules-code"><span class="code-comment">// Rules: publik bisa baca, hanya user login yang bisa tulis</span>
+rules_version = <span class="code-val">'2'</span>;
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /portfolio/{document} {
+      <span class="code-comment">// Siapapun bisa baca (untuk tampilkan portfolio)</span>
+      allow read: if true;
+      <span class="code-comment">// Hanya user yang sudah login yang bisa edit (admin)</span>
+      allow write: if request.auth != null;
+    }
+  }
+}</code>
+    </div>
+
+    <div class="info ok" style="flex-direction:column;gap:.4rem">
+      <div><i class="fas fa-1"></i>&nbsp; Paste rules di atas ke editor</div>
+      <div><i class="fas fa-2"></i>&nbsp; Klik tombol <strong>"Publish"</strong></div>
+    </div>
+
+    <div class="info tip"><i class="fas fa-shield-alt"></i>&nbsp; Rules ini aman: pengunjung portfolio hanya bisa <strong>membaca</strong> data. Hanya Anda (yang sudah login) yang bisa <strong>mengubah</strong> data.</div>
+  </div>
+
+  <!-- STEP 6 -->
+  <div class="step" id="step6">
+    <div class="step-title"><div class="step-num">6</div> Test & Upload ke Hosting</div>
+    <p><strong>Test secara lokal:</strong></p>
+    <div class="info ok" style="flex-direction:column;gap:.4rem">
+      <div><i class="fas fa-1"></i>&nbsp; Buka file <code>admin.html</code> di browser</div>
+      <div><i class="fas fa-2"></i>&nbsp; Login dengan email & password yang Anda buat di Step 3</div>
+      <div><i class="fas fa-3"></i>&nbsp; Edit konten → klik <strong>"Simpan ke Firestore"</strong></div>
+      <div><i class="fas fa-4"></i>&nbsp; Buka <code>index.html</code> → data harus muncul dari Firestore ✅</div>
+    </div>
+
+    <p style="margin-top:1rem"><strong>Upload ke hosting (pilih salah satu):</strong></p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:.75rem">
+      <div style="background:var(--soft);border:1px solid #bfdbfe;border-radius:12px;padding:1.25rem">
+        <strong style="color:var(--accent);font-size:.9rem"><i class="fas fa-fire"></i> Firebase Hosting (Gratis)</strong>
+        <p style="color:var(--muted);font-size:.82rem;margin-top:.4rem;line-height:1.6">Hosting langsung dari Firebase. Gratis. Cepat. Cocok karena sudah pakai Firebase.</p>
+        <a href="https://firebase.google.com/docs/hosting" target="_blank" style="color:var(--accent);font-size:.78rem;text-decoration:none;font-weight:600">→ Lihat cara setup</a>
+      </div>
+      <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:1.25rem">
+        <strong style="color:var(--success);font-size:.9rem"><i class="fas fa-server"></i> Hosting Indonesia</strong>
+        <p style="color:var(--muted);font-size:.82rem;margin-top:.4rem;line-height:1.6">Niagahoster / IDWebhost: upload semua file via File Manager di cPanel. Tidak perlu setting tambahan.</p>
+      </div>
+    </div>
+    <div class="info tip" style="margin-top:1rem"><i class="fas fa-lightbulb"></i>&nbsp; Setelah upload, buka <code>admin.html</code> di hosting → simpan data → portfolio langsung update! Tidak perlu upload ulang.</div>
+  </div>
+
+  <!-- TROUBLESHOOTING -->
+  <div class="step">
+    <div class="step-title"><i class="fas fa-wrench" style="color:var(--warning)"></i> Masalah Umum & Solusinya</div>
+    <div style="display:flex;flex-direction:column;gap:.75rem">
+      <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:1rem">
+        <strong>❌ "Gagal: Periksa konfigurasi"</strong><br>
+        <span style="font-size:.875rem;color:var(--muted)">→ Buka <code>js/firebase-config.js</code>, pastikan semua nilai sudah diisi dengan benar. Tidak ada tulisan "GANTI_...".</span>
+      </div>
+      <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:1rem">
+        <strong>❌ Login gagal "Email tidak ditemukan"</strong><br>
+        <span style="font-size:.875rem;color:var(--muted)">→ Pastikan email yang Anda masukkan sama persis dengan yang didaftarkan di Firebase Authentication Step 3.</span>
+      </div>
+      <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:1rem">
+        <strong>❌ "Gagal menyimpan: Missing or insufficient permissions"</strong><br>
+        <span style="font-size:.875rem;color:var(--muted)">→ Security Rules belum dipublish. Ulangi Langkah 5 dan pastikan klik tombol <strong>Publish</strong>.</span>
+      </div>
+      <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:1rem">
+        <strong>❌ Portfolio tidak muncul data baru setelah simpan</strong><br>
+        <span style="font-size:.875rem;color:var(--muted)">→ Buka portfolio lagi (refresh/hard refresh dengan Ctrl+Shift+R). Badge "Firebase Terhubung ✓" harus berwarna hijau.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>Butuh bantuan lebih lanjut? Kunjungi <a href="https://firebase.google.com/docs/firestore" target="_blank">dokumentasi resmi Firebase</a></p>
+    <p style="margin-top:.4rem">Portfolio dibuat oleh <strong>Yoki Valianda</strong> &nbsp;|&nbsp; <a href="index.html">Lihat Portfolio</a> &nbsp;|&nbsp; <a href="admin.html">Buka Admin</a></p>
+  </div>
+</div>
+
+<script>
+function copyRules() {
+  const text = `rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /portfolio/{document} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+  }
+}`;
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn = document.querySelector('.copy-btn');
+    btn.innerHTML = '<i class="fas fa-check"></i> Tersalin!';
+    setTimeout(()=>btn.innerHTML='<i class="fas fa-copy"></i> Copy',2000);
+  });
+}
+</script>
+</body>
+</html>
