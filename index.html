@@ -226,8 +226,8 @@
     <div class="hero-right">
       <div class="hero-card">
         <div class="hero-photo"><img src="img/foto.png" alt="Yoki Valianda"></div>
-        <div class="fbadge fbadge-1"><div class="bico blue"><i class="fas fa-server"></i></div><div><div class="bname">IT Sysadmin</div><div class="bsub">PT. Marisa Inti</div></div></div>
-        <div class="fbadge fbadge-2"><div class="bico sky"><i class="fas fa-keyboard"></i></div><div><div class="bname">100 WPM</div><div class="bsub">Typing Speed</div></div></div>
+        <div class="fbadge fbadge-1"><div class="bico blue"><i class="fas fa-server"></i></div><div><div class="bname">IT Support</div><div class="bsub">PT. SIMP</div></div></div>
+        <div class="fbadge fbadge-2"><div class="bico sky"><i class="fas fa-keyboard"></i></div><div><div class="bname">100+ WPM</div><div class="bsub">Typing Speed</div></div></div>
       </div>
     </div>
   </div>
@@ -431,14 +431,39 @@ function renderTL(cid, list, orgKey) {
 }
 
 function renderPortfolio(list) {
-  document.getElementById('portfolio-container').innerHTML = (list||[]).map(p=>
-    `<div class="pitem ${p.cat||''} fade-up">
-      <a href="${p.img}" data-lightbox="port" data-title="${p.title}">
-        <img src="${p.img}" alt="${p.title}" loading="lazy">
-        <div class="pover"><div class="pcat">${p.catLabel||p.cat||''}</div><div class="ptitle">${p.title}</div></div>
-        <div class="pzoom"><i class="fas fa-expand-alt"></i></div>
-      </a></div>`
-  ).join('');
+  const container = document.getElementById('portfolio-container');
+  container.innerHTML = '';
+  (list||[]).forEach(p => {
+    const wrap = document.createElement('div');
+    wrap.className = 'pitem ' + (p.cat||'') + ' fade-up';
+
+    const a = document.createElement('a');
+    a.href = p.img || '#';
+    a.dataset.lightbox = 'port';
+    a.dataset.title = p.title || '';
+
+    const img = document.createElement('img');
+    img.src = p.img || '';
+    img.alt = p.title || '';
+    img.loading = 'lazy';
+
+    const over = document.createElement('div');
+    over.className = 'pover';
+    over.innerHTML = '<div class="pcat">' + (p.catLabel||p.cat||'') + '</div><div class="ptitle">' + (p.title||'') + '</div>';
+
+    const zoom = document.createElement('div');
+    zoom.className = 'pzoom';
+    zoom.innerHTML = '<i class="fas fa-expand-alt"></i>';
+
+    a.appendChild(img);
+    a.appendChild(over);
+    a.appendChild(zoom);
+    wrap.appendChild(a);
+    container.appendChild(wrap);
+
+    // re-init lightbox on this element after DOM insert
+    if (typeof lightbox !== 'undefined') lightbox.init();
+  });
   reObserve();
 }
 
