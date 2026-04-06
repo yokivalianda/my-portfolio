@@ -8,7 +8,7 @@
   <link href="img/favicon.ico" rel="icon">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-  <link href="lib/lightbox/css/lightbox.min.css" rel="stylesheet">
+
   <style>
     :root {
       --bg:#f0f4ff; --bg2:#ffffff; --bg3:#f8faff; --card:#ffffff;
@@ -176,6 +176,18 @@
 
     @media(max-width:1024px){.navbar{padding:0 2rem}section{padding:80px 2rem}footer{padding:3.5rem 2rem 1.5rem}#home{padding:100px 2rem 60px}.hero-wrap{grid-template-columns:1fr}.hero-right{display:none}.about-grid{grid-template-columns:1fr}.fgrid{grid-template-columns:1fr 1fr}}
     @media(max-width:768px){.nav-links{display:none}.nav-links.open{display:flex;flex-direction:column;position:fixed;top:68px;left:0;right:0;background:rgba(255,255,255,0.98);backdrop-filter:blur(20px);padding:1.5rem 2rem;border-bottom:1px solid var(--border);box-shadow:0 8px 24px rgba(0,0,0,0.08);gap:0.25rem}.hamburger{display:flex}.fgrid{grid-template-columns:1fr;gap:2.5rem}.fbottom{flex-direction:column;gap:1rem;text-align:center}.skills-grid{grid-template-columns:1fr}.hero-stats{flex-wrap:wrap;gap:1.5rem}}
+
+    /* ── CUSTOM IMAGE MODAL ── */
+    #imgModal{position:fixed;inset:0;z-index:9000;display:flex;align-items:center;justify-content:center;background:rgba(5,10,25,0.92);backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity 0.25s}
+    #imgModal.open{opacity:1;pointer-events:all}
+    #imgModal .m-box{position:relative;max-width:90vw;max-height:90vh;display:flex;flex-direction:column;align-items:center;gap:1rem}
+    #imgModal .m-img{max-width:88vw;max-height:80vh;object-fit:contain;border-radius:12px;box-shadow:0 24px 80px rgba(0,0,0,0.6);transition:opacity 0.2s}
+    #imgModal .m-title{color:rgba(255,255,255,0.85);font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:500;text-align:center}
+    #imgModal .m-close{position:fixed;top:1.25rem;right:1.5rem;width:40px;height:40px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;transition:background 0.2s}
+    #imgModal .m-close:hover{background:rgba(255,255,255,0.25)}
+    #imgModal .m-prev,#imgModal .m-next{position:fixed;top:50%;transform:translateY(-50%);width:44px;height:44px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.9rem;transition:background 0.2s}
+    #imgModal .m-prev{left:1.25rem}#imgModal .m-next{right:1.25rem}
+    #imgModal .m-prev:hover,#imgModal .m-next:hover{background:rgba(255,255,255,0.25)}
   </style>
 </head>
 <body>
@@ -226,8 +238,8 @@
     <div class="hero-right">
       <div class="hero-card">
         <div class="hero-photo"><img src="img/foto.png" alt="Yoki Valianda"></div>
-        <div class="fbadge fbadge-1"><div class="bico blue"><i class="fas fa-server"></i></div><div><div class="bname">IT Support</div><div class="bsub">PT. SIMP</div></div></div>
-        <div class="fbadge fbadge-2"><div class="bico sky"><i class="fas fa-keyboard"></i></div><div><div class="bname">100+ WPM</div><div class="bsub">Typing Speed</div></div></div>
+        <div class="fbadge fbadge-1"><div class="bico blue"><i class="fas fa-server"></i></div><div><div class="bname">IT Sysadmin</div><div class="bsub">PT. Marisa Inti</div></div></div>
+        <div class="fbadge fbadge-2"><div class="bico sky"><i class="fas fa-keyboard"></i></div><div><div class="bname">100 WPM</div><div class="bsub">Typing Speed</div></div></div>
       </div>
     </div>
   </div>
@@ -323,12 +335,22 @@
   </div>
 </footer>
 
+<!-- IMAGE MODAL -->
+<div id="imgModal" role="dialog" aria-modal="true">
+  <div class="m-box">
+    <img id="modalImg" class="m-img" src="" alt="">
+    <div id="modalTitle" class="m-title"></div>
+  </div>
+  <button class="m-close" onclick="closeModal()" aria-label="Tutup"><i class="fas fa-times"></i></button>
+  <button class="m-prev" onclick="modalNav(-1)" aria-label="Sebelumnya"><i class="fas fa-chevron-left"></i></button>
+  <button class="m-next" onclick="modalNav(1)" aria-label="Berikutnya"><i class="fas fa-chevron-right"></i></button>
+</div>
+
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script src="js/firebase-config.js"></script>
-<script src="lib/lightbox/js/lightbox.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 
 <script>
 // ── DEFAULT DATA (fallback jika Firestore kosong) ──────────────
@@ -345,25 +367,26 @@ const DEF = {
 
 // ── FIREBASE ───────────────────────────────────────────────────
 let db = null;
-function setFbStatus() {} // disabled
+
 try {
   firebase.initializeApp(FIREBASE_CONFIG);
   db = firebase.firestore();
 } catch(e) {
-  console.warn('Firebase init gagal:', e);
-  setFbStatus('error', 'Mode Offline');
-  renderAll(DEF); hideLoader();
+  console.warn('Firebase init gagal, pakai data default:', e);
+  db = null;
 }
 
 // ── LOAD FIRESTORE ─────────────────────────────────────────────
 async function loadData() {
   const data = JSON.parse(JSON.stringify(DEF)); // deep copy default
-  const ARRAY_DOCS = ['services','experience','education','organization','portfolio'];
+  const SMALL_DOCS = ['profile','about','services','experience','education','organization','social'];
+  const ARRAY_DOCS = ['services','experience','education','organization'];
+
+  // Fetch dokumen kecil dulu (tanpa portfolio yang mungkin besar)
   try {
-    const snaps = await Promise.all(
-      ['profile','about','services','experience','education','organization','portfolio','social']
-      .map(name => db.collection('portfolio').doc(name).get())
-    );
+    const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 8000));
+    const fetchSmall = Promise.all(SMALL_DOCS.map(name => db.collection('portfolio').doc(name).get()));
+    const snaps = await Promise.race([fetchSmall, timeout]);
     snaps.forEach(snap => {
       if (!snap.exists) return;
       const name = snap.id; const d = snap.data();
@@ -375,11 +398,23 @@ async function loadData() {
         data[name] = { ...DEF[name], ...d };
       }
     });
-    setFbStatus('firebase-badge connected', 'Firebase Terhubung ✓');
   } catch(e) {
-    console.warn('Gagal baca Firestore:', e);
-    setFbStatus('firebase-badge error', 'Gagal Terhubung');
+    console.warn('Gagal baca data utama:', e.message);
   }
+
+  // Fetch portfolio terpisah dengan timeout lebih panjang
+  try {
+    const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 12000));
+    const fetchPort = db.collection('portfolio').doc('portfolio').get();
+    const snap = await Promise.race([fetchPort, timeout]);
+    if (snap.exists) {
+      const d = snap.data();
+      if (d.items && d.items.length) data['portfolio'] = d.items;
+    }
+  } catch(e) {
+    console.warn('Gagal baca portfolio dari Firestore, pakai data default:', e.message);
+  }
+
   return data;
 }
 
@@ -430,17 +465,56 @@ function renderTL(cid, list, orgKey) {
   reObserve();
 }
 
+// ── PORTFOLIO MODAL ───────────────────────────────────────────
+let _portItems = [];
+let _modalIdx  = 0;
+
+function openModal(idx) {
+  _modalIdx = idx;
+  const p = _portItems[idx];
+  document.getElementById('modalImg').src = p.img || '';
+  document.getElementById('modalTitle').textContent = p.title || '';
+  document.getElementById('imgModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('imgModal').classList.remove('open');
+  document.body.style.overflow = '';
+  // clear src after transition to free memory
+  setTimeout(() => { document.getElementById('modalImg').src = ''; }, 300);
+}
+function modalNav(dir) {
+  _modalIdx = (_modalIdx + dir + _portItems.length) % _portItems.length;
+  const p = _portItems[_modalIdx];
+  const img = document.getElementById('modalImg');
+  img.style.opacity = '0';
+  setTimeout(() => {
+    img.src = p.img || '';
+    document.getElementById('modalTitle').textContent = p.title || '';
+    img.style.opacity = '1';
+  }, 150);
+}
+// close on backdrop click
+document.getElementById('imgModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+// keyboard navigation
+document.addEventListener('keydown', function(e) {
+  const m = document.getElementById('imgModal');
+  if (!m.classList.contains('open')) return;
+  if (e.key === 'Escape') closeModal();
+  if (e.key === 'ArrowLeft') modalNav(-1);
+  if (e.key === 'ArrowRight') modalNav(1);
+});
+
 function renderPortfolio(list) {
+  _portItems = (list||[]);
   const container = document.getElementById('portfolio-container');
   container.innerHTML = '';
-  (list||[]).forEach(p => {
+  _portItems.forEach((p, idx) => {
     const wrap = document.createElement('div');
     wrap.className = 'pitem ' + (p.cat||'') + ' fade-up';
-
-    const a = document.createElement('a');
-    a.href = p.img || '#';
-    a.dataset.lightbox = 'port';
-    a.dataset.title = p.title || '';
+    wrap.style.cursor = 'pointer';
 
     const img = document.createElement('img');
     img.src = p.img || '';
@@ -455,14 +529,11 @@ function renderPortfolio(list) {
     zoom.className = 'pzoom';
     zoom.innerHTML = '<i class="fas fa-expand-alt"></i>';
 
-    a.appendChild(img);
-    a.appendChild(over);
-    a.appendChild(zoom);
-    wrap.appendChild(a);
+    wrap.appendChild(img);
+    wrap.appendChild(over);
+    wrap.appendChild(zoom);
+    wrap.addEventListener('click', () => openModal(idx));
     container.appendChild(wrap);
-
-    // re-init lightbox on this element after DOM insert
-    if (typeof lightbox !== 'undefined') lightbox.init();
   });
   reObserve();
 }
@@ -509,17 +580,63 @@ document.querySelectorAll('.fbtn').forEach(b=>b.addEventListener('click',functio
   const f=this.dataset.filter;
   document.querySelectorAll('.pitem').forEach(i=>i.style.display=(f==='all'||i.classList.contains(f))?'':'none');
 }));
-if(typeof lightbox!=='undefined') lightbox.option({resizeDuration:200,wrapAround:true});
+
 
 // ── BOOT ───────────────────────────────────────────────────────
 (async()=>{
-  if(db){
-    setFbStatus('firebase-badge loading','Memuat data...');
-    const data = await loadData();
-    renderAll(data);
+  // 1. Langsung render DEF dan sembunyikan loader — halaman pasti tampil
+  renderAll(DEF);
+  hideLoader();
+  reObserve();
+
+  if(!db) return;
+
+  // 2. Fetch data non-portfolio dulu (cepat, dokumen kecil)
+  try {
+    const SMALL_DOCS = ['profile','about','services','experience','education','organization','social'];
+    const ARRAY_DOCS = ['services','experience','education','organization'];
+    const t1 = new Promise((_, rej) => setTimeout(()=>rej(new Error('timeout')), 8000));
+    const snaps = await Promise.race([
+      Promise.all(SMALL_DOCS.map(n => db.collection('portfolio').doc(n).get())),
+      t1
+    ]);
+    const dataFast = JSON.parse(JSON.stringify(DEF));
+    snaps.forEach(snap => {
+      if (!snap.exists) return;
+      const name = snap.id; const d = snap.data();
+      if (ARRAY_DOCS.includes(name)) {
+        if (d.items && d.items.length) dataFast[name] = d.items;
+      } else if (name === 'about') {
+        dataFast.about = { p1: d.p1||DEF.about.p1, p2: d.p2||DEF.about.p2, skills: d.skills||DEF.about.skills };
+      } else {
+        dataFast[name] = { ...DEF[name], ...d };
+      }
+    });
+    renderAll(dataFast);
+    reObserve();
+  } catch(e) {
+    console.warn('Gagal load data utama:', e.message);
   }
-  hideLoader(); reObserve();
+
+  // 3. Fetch portfolio terpisah (bisa besar karena base64)
+  try {
+    const t2 = new Promise((_, rej) => setTimeout(()=>rej(new Error('timeout')), 15000));
+    const snap = await Promise.race([
+      db.collection('portfolio').doc('portfolio').get(),
+      t2
+    ]);
+    if (snap.exists) {
+      const d = snap.data();
+      if (d.items && d.items.length) {
+        renderPortfolio(d.items);
+        reObserve();
+      }
+    }
+  } catch(e) {
+    console.warn('Gagal load portfolio dari Firestore:', e.message);
+  }
 })();
 </script>
+
 </body>
 </html>
