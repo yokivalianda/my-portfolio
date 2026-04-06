@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Portfolio Yoki Valianda — IT System Administrator & IT Support Specialist">
   <link href="img/favicon.ico" rel="icon">
+  <!-- Supabase SDK dipindah ke bawah body agar loader tampil langsung -->
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
@@ -197,6 +198,14 @@
   <div class="ll-bar"><div class="ll-fill"></div></div>
   <div class="ll-txt">Memuat data portfolio...</div>
 </div>
+<!-- Safety: sembunyikan loader setelah maks 2 detik, apapun yang terjadi -->
+<script>
+(function(){
+  function _hl(){var l=document.getElementById('page-loader');if(!l||l.style.display==='none')return;l.style.opacity='0';setTimeout(function(){l.style.display='none';},500);}
+  window.addEventListener('load',_hl);
+  setTimeout(_hl,2000);
+})();
+</script>
 
 
 
@@ -345,14 +354,13 @@
   <button class="m-next" onclick="modalNav(1)" aria-label="Berikutnya"><i class="fas fa-chevron-right"></i></button>
 </div>
 
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-<script src="js/firebase-config.js"></script>
 
+
+<script async src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="js/supabase-config.js"></script>
 
 <script>
-// ── DEFAULT DATA (fallback jika Firestore kosong) ──────────────
+// ── DEFAULT DATA (fallback jika Supabase kosong) ──────────────
 const DEF = {
   profile:{name:'Yoki Valianda',roles:'IT System Administrator, IT Support, Freelancer',status:'Available for work',wa:'6285156355799',cv:'resume/CV_Yoki_Valianda.pdf',email:'yokivalianda14@gmail.com',desc:'Sarjana Komputer dengan pengalaman di IT Support & System Administration. Berpengalaman dalam troubleshooting, networking, dan manajemen sistem. Berdomisili di Palembang, Indonesia.',s1n:'3+',s1l:'Tahun Pengalaman',s2n:'3.71',s2l:'IPK S1',s3n:'20+',s3l:'Sertifikat'},
   about:{p1:'Saya adalah lulusan Sarjana Komputer dengan minat kuat dalam bidang IT Support dan System Administration.',p2:'Selain latar belakang IT, saya memiliki keahlian mengetik 10 jari tersertifikasi dengan kecepatan 50–100 WPM.',skills:['Operating Systems','IT Support Specialist','Computer Networking','10-Finger Typing','Microsoft Office Suite','Hardware Maintenance']},
@@ -364,58 +372,9 @@ const DEF = {
   social:{fb:'https://web.facebook.com/yokivalianda/',ig:'https://www.instagram.com/yoki_vld77/',li:'https://www.linkedin.com/in/yoki-valianda/',email:'yokivalianda14@gmail.com',addr:'Ilir Barat 1, Kota Palembang, Indonesia',copy:'© 2024 Yoki Valianda. All rights reserved.'}
 };
 
-// ── FIREBASE ───────────────────────────────────────────────────
-let db = null;
-
-try {
-  firebase.initializeApp(FIREBASE_CONFIG);
-  db = firebase.firestore();
-} catch(e) {
-  console.warn('Firebase init gagal, pakai data default:', e);
-  db = null;
-}
-
-// ── LOAD FIRESTORE ─────────────────────────────────────────────
-async function loadData() {
-  const data = JSON.parse(JSON.stringify(DEF)); // deep copy default
-  const SMALL_DOCS = ['profile','about','services','experience','education','organization','social'];
-  const ARRAY_DOCS = ['services','experience','education','organization'];
-
-  // Fetch dokumen kecil dulu (tanpa portfolio yang mungkin besar)
-  try {
-    const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 8000));
-    const fetchSmall = Promise.all(SMALL_DOCS.map(name => db.collection('portfolio').doc(name).get()));
-    const snaps = await Promise.race([fetchSmall, timeout]);
-    snaps.forEach(snap => {
-      if (!snap.exists) return;
-      const name = snap.id; const d = snap.data();
-      if (ARRAY_DOCS.includes(name)) {
-        if (d.items && d.items.length) data[name] = d.items;
-      } else if (name === 'about') {
-        data.about = { p1: d.p1||DEF.about.p1, p2: d.p2||DEF.about.p2, skills: d.skills||DEF.about.skills };
-      } else {
-        data[name] = { ...DEF[name], ...d };
-      }
-    });
-  } catch(e) {
-    console.warn('Gagal baca data utama:', e.message);
-  }
-
-  // Fetch portfolio terpisah dengan timeout lebih panjang
-  try {
-    const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 12000));
-    const fetchPort = db.collection('portfolio').doc('portfolio').get();
-    const snap = await Promise.race([fetchPort, timeout]);
-    if (snap.exists) {
-      const d = snap.data();
-      if (d.items && d.items.length) data['portfolio'] = d.items;
-    }
-  } catch(e) {
-    console.warn('Gagal baca portfolio dari Firestore, pakai data default:', e.message);
-  }
-
-  return data;
-}
+// ── SUPABASE — dinisialisasi setelah semua script async selesai ──
+let supaClient = null;
+// (init dilakukan di window 'load', lihat bagian BOOT di bawah)
 
 // ── RENDER ─────────────────────────────────────────────────────
 function renderAll(d) {
@@ -582,59 +541,75 @@ document.querySelectorAll('.fbtn').forEach(b=>b.addEventListener('click',functio
 
 
 // ── BOOT ───────────────────────────────────────────────────────
-(async()=>{
-  // 1. Langsung render DEF dan sembunyikan loader — halaman pasti tampil
+// Step 1: Render defaults + hide loader ASAP (before Supabase CDN loads)
+document.addEventListener('DOMContentLoaded', () => {
   renderAll(DEF);
   hideLoader();
   reObserve();
+});
 
-  if(!db) return;
+// Step 2: After ALL resources load (including async Supabase CDN),
+// init Supabase and fetch live data
+window.addEventListener('load', async () => {
+  const isConfigReady = typeof SUPABASE_URL !== 'undefined' && SUPABASE_URL.startsWith('https://');
+  
+  // Init Supabase setelah CDN pasti sudah loaded
+  if (isConfigReady && window.supabase) {
+    try {
+      supaClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    } catch(e) {
+      console.warn('Supabase init gagal, pakai data default:', e);
+      supaClient = null;
+    }
+  } else {
+    console.info('Supabase belum tersedia — menggunakan data default.');
+  }
 
-  // 2. Fetch data non-portfolio dulu (cepat, dokumen kecil)
+  if (!supaClient) return;
+
+  // 2. Fetch data non-portfolio (dokumen kecil, timeout 5 detik)
   try {
     const SMALL_DOCS = ['profile','about','services','experience','education','organization','social'];
     const ARRAY_DOCS = ['services','experience','education','organization'];
-    const t1 = new Promise((_, rej) => setTimeout(()=>rej(new Error('timeout')), 8000));
-    const snaps = await Promise.race([
-      Promise.all(SMALL_DOCS.map(n => db.collection('portfolio').doc(n).get())),
+    const t1 = new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 5000));
+    const { data: rows, error } = await Promise.race([
+      supaClient.from('portfolio').select('*').in('name', SMALL_DOCS),
       t1
     ]);
-    const dataFast = JSON.parse(JSON.stringify(DEF));
-    snaps.forEach(snap => {
-      if (!snap.exists) return;
-      const name = snap.id; const d = snap.data();
+    if (error) throw error;
+    const merged = JSON.parse(JSON.stringify(DEF));
+    (rows || []).forEach(row => {
+      const name = row.name, d = row.data;
+      if (!d) return;
       if (ARRAY_DOCS.includes(name)) {
-        if (d.items && d.items.length) dataFast[name] = d.items;
+        if (d.items && d.items.length) merged[name] = d.items;
       } else if (name === 'about') {
-        dataFast.about = { p1: d.p1||DEF.about.p1, p2: d.p2||DEF.about.p2, skills: d.skills||DEF.about.skills };
+        merged.about = { p1: d.p1||DEF.about.p1, p2: d.p2||DEF.about.p2, skills: d.skills||DEF.about.skills };
       } else {
-        dataFast[name] = { ...DEF[name], ...d };
+        merged[name] = { ...DEF[name], ...d };
       }
     });
-    renderAll(dataFast);
+    renderAll(merged);
     reObserve();
   } catch(e) {
     console.warn('Gagal load data utama:', e.message);
   }
 
-  // 3. Fetch portfolio terpisah (bisa besar karena base64)
+  // 3. Fetch portfolio terpisah (bisa besar, timeout 8 detik)
   try {
-    const t2 = new Promise((_, rej) => setTimeout(()=>rej(new Error('timeout')), 15000));
-    const snap = await Promise.race([
-      db.collection('portfolio').doc('portfolio').get(),
+    const t2 = new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 8000));
+    const { data: row } = await Promise.race([
+      supaClient.from('portfolio').select('*').eq('name', 'portfolio').single(),
       t2
     ]);
-    if (snap.exists) {
-      const d = snap.data();
-      if (d.items && d.items.length) {
-        renderPortfolio(d.items);
-        reObserve();
-      }
+    if (row && row.data && row.data.items && row.data.items.length) {
+      renderPortfolio(row.data.items);
+      reObserve();
     }
   } catch(e) {
-    console.warn('Gagal load portfolio dari Firestore:', e.message);
+    console.warn('Gagal load portfolio dari Supabase:', e.message);
   }
-})();
+});
 </script>
 
 </body>

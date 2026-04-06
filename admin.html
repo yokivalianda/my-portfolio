@@ -126,7 +126,7 @@
     .bsm-green{background:var(--success);color:white}.bsm-green:hover{background:#15803d}
     .bsm-red{background:var(--danger);color:white}.bsm-red:hover{background:#b91c1c}
 
-    /* ── FIREBASE STATUS ── */
+    /* ── SUPABASE STATUS ── */
     .fb-status-bar{background:var(--soft);border:1px solid #bfdbfe;border-radius:12px;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:.75rem}
     .fb-dot{display:inline-flex;align-items:center;gap:.5rem;font-size:.82rem;font-weight:600}
     .dot{width:8px;height:8px;border-radius:50%}
@@ -162,7 +162,7 @@
 <div id="loginScreen" style="display:none;align-items:center">
   <div class="lbox">
     <div class="l-logo">Yoki<span>V.</span></div>
-    <div class="l-sub">Admin Dashboard — Masuk dengan akun Firebase Anda</div>
+    <div class="l-sub">Admin Dashboard — Masuk dengan akun Supabase Anda</div>
     <label>Email Admin</label>
     <input type="email" id="l-email" placeholder="admin@email.com" autocomplete="email">
     <label>Password</label>
@@ -171,7 +171,7 @@
       <i class="fas fa-sign-in-alt" style="margin-right:.4rem"></i>Masuk ke Dashboard
     </button>
     <div class="lerr" id="lerr"></div>
-    <p class="l-hint">Gunakan email & password yang Anda daftarkan di Firebase Authentication</p>
+    <p class="l-hint">Gunakan email & password yang Anda daftarkan di Supabase Authentication</p>
   </div>
 </div>
 
@@ -352,11 +352,26 @@
 
 <div class="toast" id="toast"><i class="fas fa-check"></i><span id="toastMsg">Tersimpan!</span></div>
 
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="js/firebase-config.js"></script>
+<!-- Safety: timeout SEBELUM SDK agar tetap bisa fire walau CDN lambat -->
+<script>
+(function(){
+  setTimeout(function(){
+    var s = document.getElementById('init-screen');
+    if(s && s.style.display !== 'none'){
+      s.style.display = 'none';
+      var ls = document.getElementById('loginScreen');
+      ls.style.display = 'flex';
+      var e = document.getElementById('lerr');
+      e.textContent = 'Gagal memuat Supabase SDK. Periksa koneksi internet dan refresh halaman.';
+      e.style.display = 'block';
+    }
+  }, 10000);
+})();
+</script>
+
+<!-- Supabase SDK (synchronous — langsung tersedia setelah load) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
 
 <script>
 // ─── DEFAULT DATA ─────────────────────────────────────────────
@@ -369,33 +384,64 @@ const DEF = {
   skills:['Operating Systems','IT Support Specialist','Computer Networking','10-Finger Typing','Microsoft Office Suite','Hardware Maintenance']
 };
 
-// ─── FIREBASE ─────────────────────────────────────────────────
-let db, auth;
+// ─── SUPABASE ─────────────────────────────────────────────────
+let supaClient = null;
 function initTxt(t){document.getElementById('init-txt').textContent=t;}
 
-try {
-  firebase.initializeApp(FIREBASE_CONFIG);
-  db   = firebase.firestore();
-  auth = firebase.auth();
-  initTxt('Memeriksa sesi login...');
-} catch(e) {
-  initTxt('❌ Gagal: Periksa konfigurasi di js/firebase-config.js');
-  console.error(e);
+function showLogin(errMsg) {
+  document.getElementById('init-screen').style.display = 'none';
+  var ls = document.getElementById('loginScreen');
+  ls.style.display = 'flex';
+  if (errMsg) {
+    var e = document.getElementById('lerr');
+    e.textContent = errMsg;
+    e.style.display = 'block';
+    
+    // Jangan disable button login jika error berasal dari memuat config (bukan SDK gagal total)
+    // agar user tetap bisa memperbaiki file config lalu coba klik lagi (opsional)
+    // Walaupun paling baik adalah mereload halaman.
+  }
+}
+
+const isConfigReady = typeof SUPABASE_URL !== 'undefined' && SUPABASE_URL.startsWith('https://');
+
+// SDK sudah sync-loaded di atas, langsung init
+if (isConfigReady && window.supabase && window.supabase.createClient) {
+  try {
+    supaClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    initTxt('Memeriksa sesi login...');
+  } catch(e) {
+    initTxt('❌ Gagal: Periksa konfigurasi.');
+    console.error(e);
+    showLogin('Gagal inisialisasi Supabase: ' + e.message);
+  }
+} else if (!isConfigReady) {
+  initTxt('❌ Supabase belum dikonfigurasi.');
+  showLogin('Konfigurasi Supabase belum diisi. Buka js/supabase-config.js dan isi SUPABASE_URL serta SUPABASE_ANON_KEY.');
+} else {
+  initTxt('❌ Supabase SDK tidak tersedia.');
+  showLogin('Gagal memuat Supabase SDK. Periksa koneksi internet dan refresh halaman.');
 }
 
 // ─── AUTH STATE ───────────────────────────────────────────────
-auth && auth.onAuthStateChanged(user => {
-  document.getElementById('init-screen').style.display = 'none';
-  if (user) {
-    document.getElementById('user-email').textContent = user.email;
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('adminApp').style.display = 'flex';
-    loadAllData();
-  } else {
-    document.getElementById('loginScreen').style.display = 'flex';
-    document.getElementById('adminApp').style.display = 'none';
-  }
-});
+if (supaClient) {
+  supaClient.auth.getSession().then(function(res) {
+    var session = res.data.session;
+    document.getElementById('init-screen').style.display = 'none';
+    if (session) {
+      document.getElementById('user-email').textContent = session.user.email;
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('adminApp').style.display = 'flex';
+      loadAllData();
+    } else {
+      document.getElementById('loginScreen').style.display = 'flex';
+      document.getElementById('adminApp').style.display = 'none';
+    }
+  }).catch(function(err) {
+    console.error('getSession error:', err);
+    showLogin('Gagal memeriksa sesi: ' + err.message);
+  });
+}
 
 async function doLogin() {
   const email = document.getElementById('l-email').value.trim();
@@ -405,26 +451,31 @@ async function doLogin() {
   if (!email || !pass) { showErr('Email dan password wajib diisi.'); return; }
   btn.disabled = true; btn.textContent = 'Masuk...';
   err.style.display = 'none';
-  try {
-    await auth.signInWithEmailAndPassword(email, pass);
-  } catch(e) {
-    const msgs = { 'auth/wrong-password':'Password salah.','auth/user-not-found':'Email tidak ditemukan.','auth/invalid-email':'Format email tidak valid.','auth/too-many-requests':'Terlalu banyak percobaan. Coba lagi nanti.' };
-    showErr(msgs[e.code] || 'Login gagal: ' + e.message);
+  const { error } = await supaClient.auth.signInWithPassword({ email, password: pass });
+  if (error) {
+    const msgs = {
+      'Invalid login credentials': 'Email atau password salah.',
+      'Email not confirmed': 'Email belum dikonfirmasi.',
+      'Too many requests': 'Terlalu banyak percobaan. Coba lagi nanti.'
+    };
+    showErr(msgs[error.message] || 'Login gagal: ' + error.message);
     btn.disabled = false; btn.innerHTML = '<i class="fas fa-sign-in-alt" style="margin-right:.4rem"></i>Masuk ke Dashboard';
+  } else {
+    location.reload();
   }
 }
 function showErr(msg){const e=document.getElementById('lerr');e.textContent=msg;e.style.display='block';}
-async function doLogout(){try{await auth.signOut();}catch(e){console.error(e);}}
+async function doLogout(){await supaClient.auth.signOut(); location.reload();}
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('loginScreen').style.display!=='none')doLogin();});
 
 // ─── LOAD ALL ─────────────────────────────────────────────────
 async function loadAllData() {
   try {
-    const DOCS = ['profile','about','services','experience','education','organization','portfolio','social'];
-    const snaps = await Promise.all(DOCS.map(n => db.collection('portfolio').doc(n).get()));
-    snaps.forEach(snap => {
-      if (!snap.exists) return;
-      const n = snap.id, d = snap.data();
+    const { data: rows, error } = await supaClient.from('portfolio').select('*');
+    if (error) throw error;
+    (rows || []).forEach(row => {
+      const n = row.name, d = row.data;
+      if (!d) return;
       if (['services','experience','education','organization','portfolio'].includes(n)) {
         if (d.items) applyList(n, d.items);
       } else if (n === 'profile') {
@@ -437,10 +488,10 @@ async function loadAllData() {
       }
     });
     updateStats();
-    showToast('Data berhasil dimuat dari Firestore','t-info');
+    showToast('Data berhasil dimuat dari Supabase','t-info');
   } catch(e) {
     console.warn('Gagal load data:', e);
-    showToast('Gagal memuat data Firestore','t-error');
+    showToast('Gagal memuat data Supabase','t-error');
   }
 }
 
@@ -652,7 +703,7 @@ function updateStats(){
   document.getElementById('st-skill').textContent = skills.length;
 }
 
-// ─── SAVE ALL TO FIRESTORE ────────────────────────────────────
+// ─── SAVE ALL TO SUPABASE ─────────────────────────────────────
 async function saveAll() {
   const btn = document.getElementById('save-btn');
   btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
@@ -672,17 +723,17 @@ async function saveAll() {
   const portfolio   = { items: getList('portList',['title','img','cat','catLabel','date']) };
 
   try {
-    const col = db.collection('portfolio');
-    await Promise.all([
-      col.doc('profile').set(profile),
-      col.doc('about').set(about),
-      col.doc('social').set(social),
-      col.doc('services').set(services),
-      col.doc('experience').set(experience),
-      col.doc('education').set(education),
-      col.doc('organization').set(organization),
-      col.doc('portfolio').set(portfolio),
-    ]);
+    const { error } = await supaClient.from('portfolio').upsert([
+      { name: 'profile',      data: profile },
+      { name: 'about',        data: about },
+      { name: 'social',       data: social },
+      { name: 'services',     data: services },
+      { name: 'experience',   data: experience },
+      { name: 'education',    data: education },
+      { name: 'organization', data: organization },
+      { name: 'portfolio',    data: portfolio },
+    ], { onConflict: 'name' });
+    if (error) throw error;
     updateStats();
     showToast('Berhasil disimpan! 🎉', 't-success');
   } catch(e) {
